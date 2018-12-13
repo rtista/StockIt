@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/wcm_view_map"
+        android:title="View on Map"/>
+    <item
+        android:id="@+id/wcm_edit"
+        android:title="Edit Information"/>
+</menu>

@@ -13,21 +13,30 @@
         android:paddingLeft="24dp"
         android:paddingRight="24dp">
 
-        <ImageView android:src="@mipmap/logo"
-            android:layout_width="wrap_content"
-            android:layout_height="72dp"
+        <ImageView android:src="@drawable/logo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            />
+
+        <TextView android:id="@+id/logoText"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:layout_gravity="center_horizontal" />
+            android:text="Stock.It"
+            android:gravity="center"
+            android:textSize="50dp"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Item #32384" />
+            android:id="@+id/inventory_title"
+            android:textSize="30dp"
+            android:text="Inventory of Warehouse" />
 
         <ListView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/listView"
+            android:id="@+id/inventory_list"
             android:layout_centerHorizontal="true"
             android:layout_alignParentTop="true" />
 

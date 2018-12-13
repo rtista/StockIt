@@ -13,21 +13,41 @@
         android:paddingLeft="24dp"
         android:paddingRight="24dp">
 
-        <ImageView android:src="@mipmap/logo"
-            android:layout_width="wrap_content"
-            android:layout_height="72dp"
-            android:layout_marginBottom="24dp"
-            android:layout_gravity="center_horizontal" />
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity = "bottom"
+            >
+            <ImageView android:src="@drawable/logo"
+                android:layout_weight="1"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:adjustViewBounds="true"
+                android:maxWidth="45dp"
+                android:maxHeight="45dp"
+                />
+            <TextView android:id="@+id/logoText"
+                android:layout_weight="1"
+                android:layout_gravity="bottom"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="Stock.It"
+                android:textSize="30dp"/>
 
+        </LinearLayout>
         <TextView
             android:layout_width="match_parent"
+            android:id="@+id/warehouses_title"
             android:layout_height="wrap_content"
+            android:textSize="30dp"
             android:text="Item #32384" />
 
         <ListView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/listView"
+            android:id="@+id/warehouses_list"
             android:layout_centerHorizontal="true"
             android:layout_alignParentTop="true" />
 
