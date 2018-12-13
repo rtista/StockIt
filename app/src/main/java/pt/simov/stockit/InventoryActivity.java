@@ -22,6 +22,8 @@ public class InventoryActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inventory);
+        setTitle(R.string.title_inventory);
+
         lv = findViewById(R.id.inventory_list);
         feed = new ArrayList<>();
         feed.add(new InventoryListItem("name","description","quantity","min_quantity"));

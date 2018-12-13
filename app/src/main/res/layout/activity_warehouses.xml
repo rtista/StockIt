@@ -3,46 +3,55 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:fitsSystemWindows="true">
+    >
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:paddingTop="56dp"
         android:paddingLeft="24dp"
         android:paddingRight="24dp">
 
         <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity = "bottom"
-            >
-            <ImageView android:src="@drawable/logo"
-                android:layout_weight="1"
+            android:gravity="bottom"
+            android:orientation="horizontal"
+            android:scaleType="fitXY">
+
+            <ImageView
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
+                android:layout_weight="1"
                 android:adjustViewBounds="true"
                 android:maxWidth="45dp"
                 android:maxHeight="45dp"
-                />
-            <TextView android:id="@+id/logoText"
-                android:layout_weight="1"
-                android:layout_gravity="bottom"
+                android:src="@drawable/logo" />
+
+            <TextView
+                android:id="@+id/logoText"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
+                android:layout_gravity="bottom"
+                android:layout_weight="1"
                 android:text="Stock.It"
-                android:textSize="30dp"/>
+                android:textSize="30dp" />
 
         </LinearLayout>
-        <TextView
+
+        <View
             android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"/>
+
+        <TextView
             android:id="@+id/warehouses_title"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="30dp"
-            android:text="Item #32384" />
+            android:text="Item #32384"
+            android:textSize="30dp" />
 
         <ListView
             android:layout_width="match_parent"

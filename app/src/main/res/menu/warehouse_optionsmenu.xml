@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/wcm_view_map"
+        android:id="@+id/wom_view_map"
         android:title="View on Map"/>
     <item
-        android:id="@+id/wcm_edit"
+        android:id="@+id/wom_edit"
         android:title="Edit Information"/>
+    <item
+        android:id="@+id/wom_delete"
+        android:title="Delete Warehouse"/>
 </menu>

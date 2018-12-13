@@ -1,7 +1,9 @@
 package pt.simov.stockit;
 
 import android.content.ActivityNotFoundException;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -49,13 +51,13 @@ public class WarehouseActivity extends AppCompatActivity {
                 lat_et.setEnabled(false);
                 lon_et.setEnabled(false);
                 btn.setVisibility(View.GONE);
+                setTitle(R.string.title_view_warehouse);
                 //TODO get info
                 tv.setText("View Warehouse");
                 name_et.setText(name);
                 description_et.setText(description);
                 lat_et.setText(lat);
                 lon_et.setText(lon);
-                btn.setText("Edit");
                 break;
             case 2:     //EDIT
                 name_et.setEnabled(true);
@@ -63,13 +65,14 @@ public class WarehouseActivity extends AppCompatActivity {
                 lat_et.setEnabled(true);
                 lon_et.setEnabled(true);
                 btn.setVisibility(View.VISIBLE);
+                setTitle(R.string.title_edit_warehouse);
                 //TODO get info
                 tv.setText("Edit Warehouse");
                 name_et.setText(name);
                 description_et.setText(description);
                 lat_et.setText(lat);
                 lon_et.setText(lon);
-                btn.setText("Edit");
+                btn.setText("Confirm");
                 break;
             case 3:     //NEW
                 tv.setText("New Warehouse");
@@ -78,12 +81,13 @@ public class WarehouseActivity extends AppCompatActivity {
                 lat_et.setEnabled(true);
                 lon_et.setEnabled(true);
                 btn.setVisibility(View.VISIBLE);
+                setTitle(R.string.title_add_warehouse);
                 //TODO get info
                 name_et.setText("");
                 description_et.setText("");
                 lat_et.setText("");
                 lon_et.setText("");
-                btn.setText("Edit");
+                btn.setText("Add Warehouse");
                 break;
         }
     }
@@ -97,17 +101,37 @@ public class WarehouseActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {// Handle item selection
         switch (item.getItemId()) {
-            case R.id.wcm_view_map:
+            case R.id.wom_view_map:
                 Toast.makeText(this, "View in Map",Toast.LENGTH_LONG).show();
                 return true;
-            case R.id.wcm_edit:
+            case R.id.wom_edit:
                 setActivity(2);
                 btn.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View arg0) {
                         Toast.makeText(WarehouseActivity.this, "Save",Toast.LENGTH_LONG).show();
+                        name = name_et.getText().toString();
+                        description = description_et.getText().toString();
+                        lat = lat_et.getText().toString();
+                        lon = lon_et.getText().toString();
+                        //TODO save edited information
                         setActivity(1);
                     }
                 });
+                return true;
+            case R.id.wom_delete:
+                new AlertDialog.Builder(this)
+                        .setTitle("Delete Warehouse")
+                        .setMessage("Do you want to delete this warehouse?")
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                Intent i = new Intent(WarehouseActivity.this, WarehousesTableActivity.class);
+                                startActivity(i);
+                                //TODO remove warehouse from database
+                                Toast.makeText(WarehouseActivity.this, "Warehouse deleted from database", Toast.LENGTH_SHORT).show();
+                            }})
+                        .setNegativeButton(android.R.string.no, null).show();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

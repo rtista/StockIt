@@ -17,6 +17,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        setTitle(R.string.title_login);
+
         TextView tv = findViewById(R.id.link_signup);
         tv.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {

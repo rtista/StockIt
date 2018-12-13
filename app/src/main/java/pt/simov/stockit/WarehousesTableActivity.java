@@ -23,6 +23,8 @@ public class WarehousesTableActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_warehouses);
+        setTitle(R.string.title_warehouses);
+
         lv = findViewById(R.id.warehouses_list);
         TextView tv = findViewById(R.id.warehouses_title);
         tv.setText("Warehouses of @User");
@@ -71,6 +73,12 @@ public class WarehousesTableActivity extends AppCompatActivity {
                 i.putExtra("LONGITUDE", "");
                 i.putExtra("REQUEST_CODE",3);
                 startActivity(i);
+                return true;
+            case R.id.wom_logout:
+                i = new Intent(this,LoginActivity.class);
+                //TODO Logout operation
+                startActivity(i);
+                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

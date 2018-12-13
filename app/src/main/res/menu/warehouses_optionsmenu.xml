@@ -3,4 +3,7 @@
     <item
         android:id="@+id/wom_add"
         android:title="Add Warehouse"/>
+    <item
+        android:id="@+id/wom_logout"
+        android:title="Logout"/>
 </menu>
