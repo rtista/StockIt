@@ -1,4 +1,18 @@
 <resources>
     <string name="app_name">Stock.It</string>
     <string name="password">Password</string>
+    <string name="username">Username</string>
+    <string name="title_login">Stock.It - Login</string>
+    <string name="title_signup">Stock.It - Sign Up</string>
+    <string name="title_warehouses">Stock.It - Manage Warehouses</string>
+    <string name="title_view_warehouse">Stock.It - View Warehouse</string>
+    <string name="title_edit_warehouse">Stock.It - Edit Warehouse</string>
+    <string name="title_add_warehouse">Stock.It - Add Warehouse</string>
+    <string name="title_delete_warehouse">Stock.It - Delete Warehouse</string>
+    <string name="title_inventory">Stock.It - Manage Inventory</string>
+    <string name="title_view_item">Stock.It - View Item</string>
+    <string name="title_edit_item">Stock.It - Edit Item</string>
+    <string name="title_add_item">Stock.It - Add Item</string>
+    <string name="title_delete_item">Stock.It - Delete Item</string>
+
 </resources>

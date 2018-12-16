@@ -11,7 +11,9 @@
         android:layout_height="wrap_content"
         android:paddingTop="56dp"
         android:paddingLeft="24dp"
-        android:paddingRight="24dp">
+        android:paddingRight="24dp"
+        android:descendantFocusability="beforeDescendants"
+        android:focusableInTouchMode="true">
 
         <ImageView android:src="@drawable/logo"
             android:layout_width="match_parent"
@@ -27,13 +29,13 @@
             android:textSize="50dp"/>
 
         <!--  Name Label -->
-            <EditText android:id="@+id/input_name"
+            <EditText android:id="@+id/input_username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textCapWords"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:hint="Name" />
+                android:hint="Username" />
 
         <!-- Email Label -->
             <EditText android:id="@+id/input_email"
