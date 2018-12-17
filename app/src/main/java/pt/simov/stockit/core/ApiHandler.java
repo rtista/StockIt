@@ -5,6 +5,7 @@ import pt.simov.stockit.core.api.AuthController;
 import org.json.JSONException;
 
 import okhttp3.Request;
+import pt.simov.stockit.core.api.UserController;
 
 public class ApiHandler {
 
@@ -22,7 +23,7 @@ public class ApiHandler {
     /**
      * The user authentication token.
      */
-    private String userToken = null;
+    private String authToken = null;
 
     /**
      * Private constructor.
@@ -64,5 +65,32 @@ public class ApiHandler {
         AuthController controller = new AuthController();
 
         return controller.bearer(username, password);
+    }
+
+    public Request createAccount(String username, String password, String email) throws JSONException {
+
+        UserController controller = new UserController();
+
+        return controller.newUser(username, password, email);
+    }
+
+    /**
+     * Set the user authentication token.
+     *
+     * @param authToken The user authentication token.
+     */
+    public void setAuthToken(String authToken) {
+
+        instance.authToken = authToken;
+    }
+
+    /**
+     * Get the user authentication token.
+     *
+     * @return The user authenticaton token.
+     */
+    public String getAuthToken() {
+
+        return instance.authToken;
     }
 }
