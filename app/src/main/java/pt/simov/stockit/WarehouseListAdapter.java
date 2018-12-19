@@ -1,10 +1,13 @@
 package pt.simov.stockit;
 
 import android.content.Context;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -32,18 +35,11 @@ public class WarehouseListAdapter extends BaseAdapter {
         } else {
             itemView = arg1;
         }
-
         TextView item_title = (TextView) itemView.findViewById(R.id.warehouse_item_name);
         item_title.setText(row.get_name());
 
         TextView item_min_temp = (TextView) itemView.findViewById(R.id.warehouse_item_description);
         item_min_temp.setText(row.get_description());
-
-        TextView item_lat = (TextView) itemView.findViewById(R.id.warehouse_item_lat);
-        item_lat.setText(row.get_lat());
-
-        TextView item_long = (TextView) itemView.findViewById(R.id.warehouse_item_long);
-        item_long.setText(row.get_long());
 
         return itemView;
     }

@@ -18,7 +18,7 @@ public class ApiHandler {
      * The API URL location.
      * Todo: Make this config changeable
      */
-    private final String url = "http://192.168.1.92:8000/api";
+    private final String url = "http://172.18.159.161:8000/api";
 
     /**
      * The user authentication token.
