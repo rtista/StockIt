@@ -61,6 +61,23 @@ public class InventoryActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {// Handle item selection
+        switch (item.getItemId()) {
+            case R.id.iom_add:
+                Intent i=new Intent(this,ItemActivity.class);
+                i.putExtra("NAME", "");
+                i.putExtra("DESCRIPTION", "");
+                i.putExtra("QUANTITY", "");
+                i.putExtra("MIN_QUANTITY", "");
+                i.putExtra("REQUEST_CODE",3);
+                startActivity(i);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         getMenuInflater().inflate(R.menu.warehouses_contextmenu, menu);
