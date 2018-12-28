@@ -109,10 +109,10 @@ public class ItemActivity extends AppCompatActivity {
 
                 // Em vez de setActivity a activity é recreada pelo intent
                 Intent i=new Intent(this,ItemActivity.class);
-                i.putExtra("NAME", "");
-                i.putExtra("DESCRIPTION", "");
-                i.putExtra("QUANTITY", "");
-                i.putExtra("MIN_QUANTITY", "");
+                i.putExtra("NAME", name);
+                i.putExtra("DESCRIPTION", description);
+                i.putExtra("QUANTITY", quantity);
+                i.putExtra("MIN_QUANTITY", min_quantity);
                 i.putExtra("REQUEST_CODE",2);
                 startActivity(i);
                 finish();
