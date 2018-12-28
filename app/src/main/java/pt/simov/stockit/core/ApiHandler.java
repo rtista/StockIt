@@ -6,6 +6,7 @@ import org.json.JSONException;
 
 import okhttp3.Request;
 import pt.simov.stockit.core.api.UserController;
+import pt.simov.stockit.core.api.WarehouseController;
 
 public class ApiHandler {
 
@@ -59,19 +60,13 @@ public class ApiHandler {
      * @param username The username for the user at hand.
      * @param password The password for the given username.
      * @return boolean
+     * @throws JSONException
      */
     public Request authenticate(String username, String password) throws JSONException {
 
         AuthController controller = new AuthController();
 
         return controller.bearer(username, password);
-    }
-
-    public Request createAccount(String username, String password, String email) throws JSONException {
-
-        UserController controller = new UserController();
-
-        return controller.newUser(username, password, email);
     }
 
     /**
@@ -92,5 +87,48 @@ public class ApiHandler {
     public String getAuthToken() {
 
         return instance.authToken;
+    }
+
+    /**
+     * Create a user account.
+     * @param username The username.
+     * @param password The password.
+     * @param email The email.
+     * @return Request to be added to the queue.
+     * @throws JSONException
+     */
+    public Request createAccount(String username, String password, String email) throws JSONException {
+
+        UserController controller = new UserController();
+
+        return controller.newUser(username, password, email);
+    }
+
+    /**
+     * Returns the user warehouses.
+     * @return Request to be added to the queue.
+     */
+    public Request getWarehouses() {
+
+        WarehouseController controller = new WarehouseController(this.getAuthToken());
+
+        return controller.getWarehouses();
+    }
+
+    /**
+     * Creates a warehouse in the user account.
+     * @param name The warehouse name
+     * @param description The warehouse description
+     * @param latitude The latitude of the warehouse
+     * @param longitude The longitude of the warehouse
+     * @return Request The request object to be queued on the request queue.
+     * @throws JSONException
+     */
+    public Request createWarehouse(String name, String description, float latitude,
+                                   float longitude) throws JSONException {
+
+        WarehouseController controller = new WarehouseController(this.getAuthToken());
+
+        return controller.newWarehouse(name, description, latitude, longitude);
     }
 }
