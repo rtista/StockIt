@@ -2,7 +2,6 @@ package pt.simov.stockit;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.support.annotation.MainThread;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -110,7 +109,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             try {
                                 JSONObject resp = new JSONObject(response.body().string());
 
-                                handler.setAuthToken(resp.getString("token"));
+                                handler.setAuthToken("bearer " + resp.getString("token"));
 
                             } catch (JSONException e) {
                                 Log.e("AUTH_SUCCESS_FAIL", "How is this even possible");
