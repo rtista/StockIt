@@ -69,7 +69,7 @@ public class ItemActivity extends AppCompatActivity {
                 quantity_et.setText(quantity);
                 min_quantity_et.setText(min_quantity);
                 btn.setText("Confirm");
-                editButtonListener();
+                buttonListener(2);
                 break;
             case 3:     //NEW
                 name_et.setEnabled(true);
@@ -83,6 +83,7 @@ public class ItemActivity extends AppCompatActivity {
                 name_et.setText("");
                 min_quantity_et.setText("");
                 btn.setText("Add Item");
+                buttonListener(3);
                 break;
         }
     }
@@ -151,26 +152,42 @@ public class ItemActivity extends AppCompatActivity {
         }
     }
 
-    public void editButtonListener(){
-        btn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View arg0) {
-                Toast.makeText(ItemActivity.this, "Save",Toast.LENGTH_LONG).show();
-                name = name_et.getText().toString();
-                description = description_et.getText().toString();
-                quantity = quantity_et.getText().toString();
-                min_quantity = min_quantity_et.getText().toString();
-                //TODO save edited information
-//                Em vez de setActivity, esta é recriada por intent
-//                setActivity(1);
-                Intent i=new Intent(ItemActivity.this,ItemActivity.class);
-                i.putExtra("NAME", name);
-                i.putExtra("DESCRIPTION", description);
-                i.putExtra("QUANTITY", quantity);
-                i.putExtra("MIN_QUANTITY", min_quantity);
-                i.putExtra("REQUEST_CODE",1);
-                startActivity(i);
-                finish();
-            }
-        });
+    public void buttonListener(int request){
+        switch(request) {
+            case 2:
+                btn.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View arg0) {
+                        Toast.makeText(ItemActivity.this, "Save", Toast.LENGTH_LONG).show();
+                        name = name_et.getText().toString();
+                        description = description_et.getText().toString();
+                        quantity = quantity_et.getText().toString();
+                        min_quantity = min_quantity_et.getText().toString();
+                        //TODO save edited information
+    //                Em vez de setActivity, esta é recriada por intent
+    //                setActivity(1);
+                        Intent i = new Intent(ItemActivity.this, ItemActivity.class);
+                        i.putExtra("NAME", name);
+                        i.putExtra("DESCRIPTION", description);
+                        i.putExtra("QUANTITY", quantity);
+                        i.putExtra("MIN_QUANTITY", min_quantity);
+                        i.putExtra("REQUEST_CODE", 1);
+                        startActivity(i);
+                        finish();
+                    }
+                });
+                break;
+            case 3:
+                btn.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View arg0) {
+                        Toast.makeText(ItemActivity.this, "Save", Toast.LENGTH_LONG).show();
+                        name = name_et.getText().toString();
+                        description = description_et.getText().toString();
+                        quantity = quantity_et.getText().toString();
+                        min_quantity = min_quantity_et.getText().toString();
+                        //TODO save edited information
+                    }
+                });
+                break;
+        }
     }
 }
