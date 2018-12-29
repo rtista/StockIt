@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -18,12 +19,13 @@ public class ItemActivity extends AppCompatActivity {
     String description, quantity, min_quantity, name;
     EditText name_et, description_et, quantity_et, min_quantity_et;
     Button btn;
+    int request;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item);
         in = getIntent();
-        int request =  in.getIntExtra("REQUEST_CODE",1);
+        request =  in.getIntExtra("REQUEST_CODE",1);
 
         name_et = findViewById(R.id.item_name);
         description_et = findViewById(R.id.item_description);
@@ -67,6 +69,7 @@ public class ItemActivity extends AppCompatActivity {
                 quantity_et.setText(quantity);
                 min_quantity_et.setText(min_quantity);
                 btn.setText("Confirm");
+                editButtonListener();
                 break;
             case 3:     //NEW
                 name_et.setEnabled(true);
@@ -86,7 +89,13 @@ public class ItemActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.item_optionsmenu, menu);
+//        getMenuInflater().inflate(R.menu.item_optionsmenu, menu);
+        MenuInflater menuInflater = getMenuInflater();
+        switch (request){
+            case 1:
+                menuInflater.inflate(R.menu.item_optionsmenu, menu);
+                break;
+        }
         return true;
     }
 
@@ -97,7 +106,18 @@ public class ItemActivity extends AppCompatActivity {
                 Toast.makeText(this, "View in Map",Toast.LENGTH_LONG).show();
                 return true;
             case R.id.iom_edit:
-                setActivity(2);
+
+                // Em vez de setActivity a activity é recreada pelo intent
+                Intent i=new Intent(this,ItemActivity.class);
+                i.putExtra("NAME", name);
+                i.putExtra("DESCRIPTION", description);
+                i.putExtra("QUANTITY", quantity);
+                i.putExtra("MIN_QUANTITY", min_quantity);
+                i.putExtra("REQUEST_CODE",2);
+                startActivity(i);
+                finish();
+
+                /*setActivity(2);
                 btn.setOnClickListener(new View.OnClickListener() {
                     public void onClick(View arg0) {
                         Toast.makeText(ItemActivity.this, "Save",Toast.LENGTH_LONG).show();
@@ -108,7 +128,7 @@ public class ItemActivity extends AppCompatActivity {
                         //TODO save edited information
                         setActivity(1);
                     }
-                });
+                });*/
                 return true;
             case R.id.iom_delete:
                 new AlertDialog.Builder(this)
@@ -129,5 +149,28 @@ public class ItemActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void editButtonListener(){
+        btn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View arg0) {
+                Toast.makeText(ItemActivity.this, "Save",Toast.LENGTH_LONG).show();
+                name = name_et.getText().toString();
+                description = description_et.getText().toString();
+                quantity = quantity_et.getText().toString();
+                min_quantity = min_quantity_et.getText().toString();
+                //TODO save edited information
+//                Em vez de setActivity, esta é recriada por intent
+//                setActivity(1);
+                Intent i=new Intent(ItemActivity.this,ItemActivity.class);
+                i.putExtra("NAME", name);
+                i.putExtra("DESCRIPTION", description);
+                i.putExtra("QUANTITY", quantity);
+                i.putExtra("MIN_QUANTITY", min_quantity);
+                i.putExtra("REQUEST_CODE",1);
+                startActivity(i);
+                finish();
+            }
+        });
     }
 }
