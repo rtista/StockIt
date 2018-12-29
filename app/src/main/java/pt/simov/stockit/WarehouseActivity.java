@@ -187,6 +187,7 @@ public class WarehouseActivity extends AppCompatActivity implements View.OnClick
                 lat_et.setText("");
                 lon_et.setText("");
                 btn.setText("Add Warehouse");
+                btn.setOnClickListener(this);
                 break;
         }
     }
