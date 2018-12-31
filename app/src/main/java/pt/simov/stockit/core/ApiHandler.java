@@ -1,10 +1,11 @@
 package pt.simov.stockit.core;
 
-import pt.simov.stockit.core.api.AuthController;
-
 import org.json.JSONException;
 
+import java.util.HashMap;
+
 import okhttp3.Request;
+import pt.simov.stockit.core.api.AuthController;
 import pt.simov.stockit.core.api.UserController;
 import pt.simov.stockit.core.api.WarehouseController;
 
@@ -19,7 +20,8 @@ public class ApiHandler {
      * The API URL location.
      * Todo: Make this config changeable
      */
-    private final String url = "http://172.18.159.161:8000/api";
+    // private final String url = "http://172.18.158.14:8000/api";
+    private final String url = "http://192.168.1.5:8000/api";
 
     /**
      * The user authentication token.
@@ -112,7 +114,7 @@ public class ApiHandler {
 
         WarehouseController controller = new WarehouseController(this.getAuthToken());
 
-        return controller.getWarehouses();
+        return controller.get();
     }
 
     /**
@@ -129,6 +131,49 @@ public class ApiHandler {
 
         WarehouseController controller = new WarehouseController(this.getAuthToken());
 
-        return controller.newWarehouse(name, description, latitude, longitude);
+        return controller.post(name, description, latitude, longitude);
+    }
+
+    /**
+     * Creates a warehouse in the user account.
+     *
+     * @param name        The warehouse name
+     * @param description The warehouse description
+     * @return Request The request object to be queued on the request queue.
+     * @throws JSONException
+     */
+    public Request createWarehouse(String name, String description) throws JSONException {
+
+        WarehouseController controller = new WarehouseController(this.getAuthToken());
+
+        return controller.post(name, description);
+    }
+
+    /**
+     * Creates a warehouse in the user account.
+     *
+     * @param id     The warehouse id
+     * @param values The parameters to be modified.
+     * @return Request The request object to be queued on the request queue.
+     * @throws JSONException
+     */
+    public Request editWarehouse(int id, HashMap<String, Object> values) throws JSONException {
+
+        WarehouseController controller = new WarehouseController(this.getAuthToken());
+
+        return controller.patch(id, values);
+    }
+
+    /**
+     * Creates a warehouse in the user account.
+     *
+     * @param id The warehouse id
+     * @return Request The request object to be queued on the request queue.
+     */
+    public Request deleteWarehouse(int id) {
+
+        WarehouseController controller = new WarehouseController(this.getAuthToken());
+
+        return controller.delete(id);
     }
 }

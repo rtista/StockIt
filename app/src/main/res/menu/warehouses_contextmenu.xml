@@ -3,4 +3,10 @@
     <item
         android:id="@+id/wcm_view"
         android:title="View"/>
+    <item
+        android:id="@+id/wcm_edit"
+        android:title="Edit" />
+    <item
+        android:id="@+id/wcm_delete"
+        android:title="Delete" />
 </menu>
