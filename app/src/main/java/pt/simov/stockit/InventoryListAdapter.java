@@ -40,10 +40,10 @@ public class InventoryListAdapter extends BaseAdapter {
         }
 
         TextView item_title = (TextView) itemView.findViewById(R.id.inventory_item_name);
-        item_title.setText(row.get_name());
+        item_title.setText(row.getName());
 
         TextView item_min_temp = (TextView) itemView.findViewById(R.id.inventory_item_description);
-        item_min_temp.setText(row.get_description());
+        item_min_temp.setText(row.getDescription());
 
         return itemView;
     }

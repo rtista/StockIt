@@ -2,50 +2,115 @@ package pt.simov.stockit;
 
 public class InventoryListItem {
 
-    private String _name = null;
-    private String _description = null;
-    private String _quantity = null;
-    private String _min_quantity = null;
+    /**
+     * The item id.
+     */
+    private int id;
 
-    InventoryListItem(){}
+    /**
+     * The item name.
+     */
+    private String name;
 
-    InventoryListItem(String name, String description, String quantity, String min_quantity){
-        _name = name;
-        _description = description;
-        _quantity = quantity;
-        _min_quantity = min_quantity;
+    /**
+     * The item description.
+     */
+    private String description;
+
+    /**
+     * The item quantity.
+     */
+    private int quantity;
+
+    /**
+     * The item warehouse section.
+     */
+    private String section;
+
+    /**
+     * The item barcode value.
+     */
+    private String barcode;
+
+    /**
+     * The item alert/minimum quantity.
+     */
+    private int min_quantity;
+
+    /**
+     * The constructor.
+     *
+     * @param id           The item id.
+     * @param name         The item name.
+     * @param description  The item description.
+     * @param quantity     The item quantity.
+     * @param barcode      The item barcode.
+     * @param section      The item section.
+     * @param min_quantity The item alert/minimum quantity.
+     */
+    public InventoryListItem(int id, String name, String description, int quantity, String section, String barcode, int min_quantity) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.quantity = quantity;
+        this.section = section;
+        this.barcode = barcode;
+        this.min_quantity = min_quantity;
     }
 
-
-    public String get_name() {
-        return _name;
+    public int getId() {
+        return this.id;
     }
 
-    public void set_name(String _name) {
-        this._name = _name;
+    public void setId(int id) {
+        this.id = id;
     }
 
-    public String get_description() {
-        return _description;
+    public String getName() {
+        return this.name;
     }
 
-    public void set_description(String _description) {
-        this._description = _description;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String get_quantity() {
-        return _quantity;
+    public String getDescription() {
+        return this.description;
     }
 
-    public void set_quantity(String _quantity) {
-        this._quantity = _quantity;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public String get_min_quantity() {
-        return _min_quantity;
+    public int getQuantity() {
+        return this.quantity;
     }
 
-    public void set_min_quantity(String _min_quantity) {
-        this._min_quantity = _min_quantity;
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public String getSection() {
+        return this.section;
+    }
+
+    public void setSection(String section) {
+        this.section = section;
+    }
+
+    public String getBarcode() {
+        return this.barcode;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
+    }
+
+    public int getMin_quantity() {
+        return this.min_quantity;
+    }
+
+    public void setMin_quantity(int min_quantity) {
+        this.min_quantity = min_quantity;
     }
 }
