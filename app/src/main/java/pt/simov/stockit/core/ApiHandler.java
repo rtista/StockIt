@@ -6,6 +6,7 @@ import java.util.HashMap;
 
 import okhttp3.Request;
 import pt.simov.stockit.core.api.AuthController;
+import pt.simov.stockit.core.api.ItemController;
 import pt.simov.stockit.core.api.UserController;
 import pt.simov.stockit.core.api.WarehouseController;
 
@@ -29,9 +30,24 @@ public class ApiHandler {
     private String authToken = null;
 
     /**
+     * The handler's item controller.
+     */
+    private ItemController itemController;
+
+    /**
      * Private constructor.
      */
     private ApiHandler() {
+    }
+
+    /**
+     * Item Controller.
+     *
+     * @return ItemController
+     */
+    public ItemController item() {
+
+        return new ItemController(getAuthToken());
     }
 
     /**
