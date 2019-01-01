@@ -79,7 +79,7 @@
             android:text="Quantity" />
 
         <EditText
-            android:id="@+id/item_crud_quantity"
+            android:id="@+id/item_crud_et_quantity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="number"

@@ -91,7 +91,7 @@ public class InventoryListItem {
     }
 
     public String getSection() {
-        return this.section;
+        return this.section == null ? "" : this.section;
     }
 
     public void setSection(String section) {
@@ -99,7 +99,7 @@ public class InventoryListItem {
     }
 
     public String getBarcode() {
-        return this.barcode;
+        return this.barcode == null ? "" : this.barcode;
     }
 
     public void setBarcode(String barcode) {

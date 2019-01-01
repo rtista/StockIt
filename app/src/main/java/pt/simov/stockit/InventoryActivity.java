@@ -165,6 +165,7 @@ public class InventoryActivity extends AppCompatActivity {
 
                 i = new Intent(getApplicationContext(), InventoryCrudActivity.class);
 
+                i.putExtra("WAREHOUSE_ID", this.wid);
                 i.putExtra("NAME", feed.get(pos).getName());
                 i.putExtra("DESCRIPTION", feed.get(pos).getDescription());
                 i.putExtra("QUANTITY", feed.get(pos).getQuantity());
@@ -316,8 +317,8 @@ public class InventoryActivity extends AppCompatActivity {
                                                 it.getString("name"),
                                                 it.getString("description"),
                                                 it.getInt("quantity"),
-                                                it.getString("barcode"),
                                                 it.getString("section"),
+                                                it.getString("barcode"),
                                                 it.getInt("min_quantity")
                                         )
                                 );

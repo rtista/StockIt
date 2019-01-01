@@ -76,7 +76,7 @@ public class InventoryCrudActivity extends AppCompatActivity implements View.OnC
 
         this.name_et = findViewById(R.id.item_crud_et_name);
         this.desc_et = findViewById(R.id.item_crud_description);
-        this.quant_et = findViewById(R.id.item_crud_quantity);
+        this.quant_et = findViewById(R.id.item_crud_et_quantity);
         this.barcode_et = findViewById(R.id.item_crud_barcode);
         this.section_et = findViewById(R.id.item_crud_section);
         this.min_quant_et = findViewById(R.id.item_crud_alert);
@@ -90,12 +90,9 @@ public class InventoryCrudActivity extends AppCompatActivity implements View.OnC
      */
     private void setActivity() {
 
-        String name = this.name_et.getText().toString();
-        String desc = this.desc_et.getText().toString();
-        String quant = this.quant_et.getText().toString();
-        String barcode = this.barcode_et.getText().toString();
-        String section = this.section_et.getText().toString();
-        String min_quant = this.min_quant_et.getText().toString();
+        // Initialize Info
+        String name, desc, barcode, section;
+        int quant, min_quant;
 
         Button btn = findViewById(R.id.item_crud_action);
 
@@ -115,13 +112,21 @@ public class InventoryCrudActivity extends AppCompatActivity implements View.OnC
                 // Set Activity Title
                 setTitle(R.string.title_view_item);
 
+                // Get Info
+                name = this.getIntent().getStringExtra("NAME");
+                desc = this.getIntent().getStringExtra("DESCRIPTION");
+                quant = this.getIntent().getIntExtra("QUANTITY", 0);
+                barcode = this.getIntent().getStringExtra("BARCODE");
+                section = this.getIntent().getStringExtra("SECTION");
+                min_quant = this.getIntent().getIntExtra("MIN_QUANTITY", 0);
+
                 // Set Text fields content
                 this.name_et.setText(name);
                 this.desc_et.setText(desc);
-                this.quant_et.setText(quant);
+                this.quant_et.setText(String.valueOf(quant));
                 this.barcode_et.setText(barcode);
                 this.section_et.setText(section);
-                this.min_quant_et.setText(min_quant);
+                this.min_quant_et.setText(String.valueOf(min_quant));
 
                 btn.setText("Back");
                 break;
@@ -140,13 +145,21 @@ public class InventoryCrudActivity extends AppCompatActivity implements View.OnC
                 // Set Activity Title
                 setTitle(R.string.title_edit_item);
 
+                // Get Info
+                name = this.getIntent().getStringExtra("NAME");
+                desc = this.getIntent().getStringExtra("DESCRIPTION");
+                quant = this.getIntent().getIntExtra("QUANTITY", 0);
+                barcode = this.getIntent().getStringExtra("BARCODE");
+                section = this.getIntent().getStringExtra("SECTION");
+                min_quant = this.getIntent().getIntExtra("MIN_QUANTITY", 0);
+
                 // Set Text fields content
                 this.name_et.setText(name);
                 this.desc_et.setText(desc);
-                this.quant_et.setText(quant);
+                this.quant_et.setText(String.valueOf(quant));
                 this.barcode_et.setText(barcode);
                 this.section_et.setText(section);
-                this.min_quant_et.setText(min_quant);
+                this.min_quant_et.setText(String.valueOf(min_quant));
 
                 btn.setText("Save");
                 break;
@@ -210,7 +223,7 @@ public class InventoryCrudActivity extends AppCompatActivity implements View.OnC
             // Edit Warehouse
             case REQUEST_CODE_EDIT:
                 int id = this.getIntent().getIntExtra("ITEM_ID", -1);
-                editItem(id, name, desc, barcode, section, min_quant);
+                editItem(id, name, desc, quant, barcode, section, min_quant);
                 break;
         }
     }
@@ -248,8 +261,8 @@ public class InventoryCrudActivity extends AppCompatActivity implements View.OnC
      * @param name        The warehouse name.
      * @param description The warehouse description.
      */
-    private void editItem(int id, String name, String description, String barcode,
-                          String section, int min_quantity) {
+    private void editItem(int id, String name, String description, int quantity,
+                          String barcode, String section, int min_quantity) {
 
         HashMap<String, Object> map = new HashMap<>();
 
@@ -273,6 +286,7 @@ public class InventoryCrudActivity extends AppCompatActivity implements View.OnC
             map.put("section", section);
         }
 
+        map.put("quantity", quantity);
         map.put("min_quantity", min_quantity);
 
         // If there are modified items
