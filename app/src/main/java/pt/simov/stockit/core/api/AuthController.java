@@ -8,6 +8,7 @@ import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import pt.simov.stockit.core.ApiHandler;
+import pt.simov.stockit.core.domain.AuthToken;
 
 
 public class AuthController {
@@ -18,6 +19,11 @@ public class AuthController {
     private String url = "/auth/token";
 
     /**
+     * The authentication token.
+     */
+    private AuthToken authToken;
+
+    /**
      * Json media type.
      */
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
@@ -26,6 +32,44 @@ public class AuthController {
      * Constructor.
      */
     public AuthController() {
+
+        this.authToken = null;
+    }
+
+    /**
+     * Set the authentication token.
+     *
+     * @param authToken The authentication token.
+     */
+    public void setAuthToken(AuthToken authToken) {
+
+        this.authToken = authToken;
+    }
+
+    /**
+     * The Authorization HTTP header value.
+     *
+     * @return String
+     */
+    public String getAuthorization() {
+
+        return this.authToken == null ? null
+                : this.authToken.getMethod() + " " + this.authToken.getToken();
+    }
+
+    /**
+     * Returns true when the token is expired.
+     *
+     * @return boolean
+     */
+    public boolean isTokenExpired() {
+
+        if (this.authToken == null) {
+
+            return true;
+        }
+
+        return this.authToken.isExpired();
     }
 
     /**

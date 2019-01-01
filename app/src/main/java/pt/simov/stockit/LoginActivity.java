@@ -22,6 +22,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import pt.simov.stockit.core.ApiHandler;
+import pt.simov.stockit.core.domain.AuthToken;
 import pt.simov.stockit.core.http.HttpClient;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
@@ -44,7 +45,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         // setTitle(R.string.title_login);
 
         // Auto Login on Token
-        if (handler.getAuthToken() != null) {
+        if (!handler.auth().isTokenExpired()) {
 
             try {
 
@@ -85,7 +86,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         String password = ((EditText) findViewById(R.id.input_password)).getText().toString();
 
         try {
-            Request req = handler.authenticate(username, password);
+            Request req = handler.auth().bearer(username, password);
 
             // Execute the request
             client.newCall(req).enqueue(new Callback() {
@@ -108,7 +109,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             try {
                                 JSONObject resp = new JSONObject(response.body().string());
 
-                                handler.setAuthToken("bearer " + resp.getString("token"));
+                                handler.auth().setAuthToken(
+                                        new AuthToken(
+                                                resp.getString("auth_type"),
+                                                resp.getString("token"),
+                                                resp.getInt("expires_on")
+                                        )
+                                );
 
                             } catch (JSONException e) {
                                 Log.e("AUTH_SUCCESS_FAIL", "How is this even possible");

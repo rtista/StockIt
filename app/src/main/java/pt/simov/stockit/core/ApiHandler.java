@@ -1,10 +1,5 @@
 package pt.simov.stockit.core;
 
-import org.json.JSONException;
-
-import java.util.HashMap;
-
-import okhttp3.Request;
 import pt.simov.stockit.core.api.AuthController;
 import pt.simov.stockit.core.api.ItemController;
 import pt.simov.stockit.core.api.UserController;
@@ -22,33 +17,27 @@ public class ApiHandler {
      * Todo: Make this config changeable
      */
     // private final String url = "http://172.18.158.14:8000/api";
-    private final String url = "http://192.168.1.5:8000/api";
+    private final String url = "http://192.168.1.7:8000/api";
 
     /**
-     * The user authentication token.
+     * The handler's item controller.
      */
-    private String authToken = null;
+    private AuthController authController;
+
+    /**
+     * The handler's item controller.
+     */
+    private UserController userController;
+
+    /**
+     * The handler's item controller.
+     */
+    private WarehouseController warehouseController;
 
     /**
      * The handler's item controller.
      */
     private ItemController itemController;
-
-    /**
-     * Private constructor.
-     */
-    private ApiHandler() {
-    }
-
-    /**
-     * Item Controller.
-     *
-     * @return ItemController
-     */
-    public ItemController item() {
-
-        return new ItemController(getAuthToken());
-    }
 
     /**
      * Returns the singleton instance.
@@ -65,6 +54,15 @@ public class ApiHandler {
     }
 
     /**
+     * Private constructor.
+     */
+    private ApiHandler() {
+
+        this.authController = new AuthController();
+        this.userController = new UserController();
+    }
+
+    /**
      * Returns the singleton instance.
      * @return ApiHandler
      */
@@ -74,122 +72,42 @@ public class ApiHandler {
     }
 
     /**
-     * Authenticates the user against the API, returns the bearer token.
-     * @param username The username for the user at hand.
-     * @param password The password for the given username.
-     * @return boolean
-     * @throws JSONException
-     */
-    public Request authenticate(String username, String password) throws JSONException {
-
-        AuthController controller = new AuthController();
-
-        return controller.bearer(username, password);
-    }
-
-    /**
-     * Set the user authentication token.
+     * Returns the Authentication Controller.
      *
-     * @param authToken The user authentication token.
+     * @return AuthController
      */
-    public void setAuthToken(String authToken) {
+    public AuthController auth() {
 
-        instance.authToken = authToken;
+        return this.authController;
     }
 
     /**
-     * Get the user authentication token.
+     * Returns the User Controller.
      *
-     * @return The user authenticaton token.
+     * @return UserController
      */
-    public String getAuthToken() {
+    public UserController user() {
 
-        return instance.authToken;
+        return this.userController;
     }
 
     /**
-     * Create a user account.
-     * @param username The username.
-     * @param password The password.
-     * @param email The email.
-     * @return Request to be added to the queue.
-     * @throws JSONException
-     */
-    public Request createAccount(String username, String password, String email) throws JSONException {
-
-        UserController controller = new UserController();
-
-        return controller.newUser(username, password, email);
-    }
-
-    /**
-     * Returns the user warehouses.
-     * @return Request to be added to the queue.
-     */
-    public Request getWarehouses() {
-
-        WarehouseController controller = new WarehouseController(this.getAuthToken());
-
-        return controller.get();
-    }
-
-    /**
-     * Creates a warehouse in the user account.
-     * @param name The warehouse name
-     * @param description The warehouse description
-     * @param latitude The latitude of the warehouse
-     * @param longitude The longitude of the warehouse
-     * @return Request The request object to be queued on the request queue.
-     * @throws JSONException
-     */
-    public Request createWarehouse(String name, String description, float latitude,
-                                   float longitude) throws JSONException {
-
-        WarehouseController controller = new WarehouseController(this.getAuthToken());
-
-        return controller.post(name, description, latitude, longitude);
-    }
-
-    /**
-     * Creates a warehouse in the user account.
+     * Returns the Warehouse Controller.
      *
-     * @param name        The warehouse name
-     * @param description The warehouse description
-     * @return Request The request object to be queued on the request queue.
-     * @throws JSONException
+     * @return WarehouseController
      */
-    public Request createWarehouse(String name, String description) throws JSONException {
+    public WarehouseController warehouse() {
 
-        WarehouseController controller = new WarehouseController(this.getAuthToken());
-
-        return controller.post(name, description);
+        return new WarehouseController(this.authController.getAuthorization());
     }
 
     /**
-     * Creates a warehouse in the user account.
+     * Returns the Item Controller.
      *
-     * @param id     The warehouse id
-     * @param values The parameters to be modified.
-     * @return Request The request object to be queued on the request queue.
-     * @throws JSONException
+     * @return ItemController
      */
-    public Request editWarehouse(int id, HashMap<String, Object> values) throws JSONException {
+    public ItemController item() {
 
-        WarehouseController controller = new WarehouseController(this.getAuthToken());
-
-        return controller.patch(id, values);
-    }
-
-    /**
-     * Creates a warehouse in the user account.
-     *
-     * @param id The warehouse id
-     * @return Request The request object to be queued on the request queue.
-     */
-    public Request deleteWarehouse(int id) {
-
-        WarehouseController controller = new WarehouseController(this.getAuthToken());
-
-        return controller.delete(id);
+        return new ItemController(this.authController.getAuthorization());
     }
 }

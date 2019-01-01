@@ -31,7 +31,7 @@ public class UserController {
      *
      * @return Request The request object to be queued on the request queue.
      */
-    public Request newUser(String username, String password, String email) throws JSONException {
+    public Request post(String username, String password, String email) throws JSONException {
 
         // Create JSON body
         JSONObject json = new JSONObject();

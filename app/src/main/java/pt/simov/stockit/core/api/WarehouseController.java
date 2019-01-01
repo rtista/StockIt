@@ -54,10 +54,12 @@ public class WarehouseController {
 
      /**
      * Creates a warehouse in the user account.
+      *
      * @param name The warehouse name
      * @param description The warehouse description
      * @param latitude The latitude of the warehouse
      * @param longitude The longitude of the warehouse
+      *
      * @return Request The request object to be queued on the request queue.
      * @throws JSONException
      */

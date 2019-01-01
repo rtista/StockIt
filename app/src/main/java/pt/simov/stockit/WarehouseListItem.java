@@ -7,9 +7,6 @@ public class WarehouseListItem {
         private String _lat = null;
         private String _long= null;
 
-
-    WarehouseListItem()	{	}
-
     WarehouseListItem(int id, String name, String description, String lat, String lon) {
         _id = id;
         _name = name;

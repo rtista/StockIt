@@ -234,7 +234,7 @@ public class WarehouseActivity extends AppCompatActivity implements View.OnClick
 
             // Create request
             try {
-                Request req = this.apiHandler.createWarehouse(name, description);
+                Request req = this.apiHandler.warehouse().post(name, description);
 
                 this.handleRequest(req);
 
@@ -249,7 +249,7 @@ public class WarehouseActivity extends AppCompatActivity implements View.OnClick
 
             // Create request
             try {
-                Request req = this.apiHandler.createWarehouse(name, description, latitude, longitude);
+                Request req = this.apiHandler.warehouse().post(name, description, latitude, longitude);
 
                 this.handleRequest(req);
 
@@ -297,7 +297,7 @@ public class WarehouseActivity extends AppCompatActivity implements View.OnClick
 
             try {
 
-                Request req = this.apiHandler.editWarehouse(id, map);
+                Request req = this.apiHandler.warehouse().patch(id, map);
                 this.handleRequest(req);
 
             } catch (JSONException e) {

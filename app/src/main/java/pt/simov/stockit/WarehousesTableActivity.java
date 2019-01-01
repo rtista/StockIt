@@ -286,7 +286,7 @@ public class WarehousesTableActivity extends AppCompatActivity implements Adapte
      */
     private void getWarehouses() {
 
-        Request req = this.apiHandler.getWarehouses();
+        Request req = this.apiHandler.warehouse().get();
 
         this.client.newCall(req).enqueue(new Callback() {
             @Override
@@ -387,7 +387,7 @@ public class WarehousesTableActivity extends AppCompatActivity implements Adapte
      */
     private void deleteWarehouse(int id) {
 
-        Request req = this.apiHandler.deleteWarehouse(id);
+        Request req = this.apiHandler.warehouse().delete(id);
 
         this.client.newCall(req).enqueue(new Callback() {
             @Override

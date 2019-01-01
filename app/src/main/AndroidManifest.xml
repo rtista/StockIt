@@ -20,7 +20,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".SignupActivity" />
-        <activity android:name=".ItemActivity" />
         <activity android:name=".InventoryActivity" />
         <activity android:name=".WarehousesTableActivity" />
         <activity android:name=".WarehouseActivity" />
