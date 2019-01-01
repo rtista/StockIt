@@ -3,4 +3,7 @@
     <item
         android:id="@+id/iom_add"
         android:title="Add Item"/>
+    <item
+        android:id="@+id/iom_barcode"
+        android:title="Barcode"/>
 </menu>

@@ -64,13 +64,17 @@ public class InventoryActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {// Handle item selection
         switch (item.getItemId()) {
             case R.id.iom_add:
-                Intent i=new Intent(this,ItemActivity.class);
+                Intent i = new Intent(this,ItemActivity.class);
                 i.putExtra("NAME", "");
                 i.putExtra("DESCRIPTION", "");
                 i.putExtra("QUANTITY", "");
                 i.putExtra("MIN_QUANTITY", "");
                 i.putExtra("REQUEST_CODE",3);
                 startActivity(i);
+                return true;
+            case R.id.iom_barcode:
+                Intent iBarcode = new Intent(this,BarcodeActivity.class);
+                startActivity(iBarcode);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

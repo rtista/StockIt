@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:hardwareAccelerated="true"
         android:usesCleartextTraffic="true"
         android:allowBackup="true"
         android:icon="@mipmap/logo"
@@ -23,7 +24,8 @@
         <activity android:name=".ItemActivity" />
         <activity android:name=".InventoryActivity" />
         <activity android:name=".WarehousesTableActivity" />
-        <activity android:name=".WarehouseActivity"></activity>
+        <activity android:name=".WarehouseActivity" />
+        <activity android:name=".BarcodeActivity"></activity>
     </application>
 
 
