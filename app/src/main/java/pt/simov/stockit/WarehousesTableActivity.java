@@ -1,8 +1,11 @@
 package pt.simov.stockit;
 
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -26,8 +29,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import pt.simov.stockit.core.ApiHandler;
+import pt.simov.stockit.core.domain.Warehouse;
 import pt.simov.stockit.core.http.HttpClient;
-import pt.simov.stockit.domain.Warehouse;
 
 public class WarehousesTableActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
@@ -44,7 +47,7 @@ public class WarehousesTableActivity extends AppCompatActivity implements Adapte
     /**
      * The list which contains the warehouse entities.
      */
-    private ArrayList<WarehouseListItem> feed = new ArrayList<>();
+    private ArrayList<Warehouse> feed = new ArrayList<>();
 
     /**
      * The list view adapter.
@@ -114,57 +117,160 @@ public class WarehousesTableActivity extends AppCompatActivity implements Adapte
         // Handle item selection
         switch (item.getItemId()) {
 
+            // On Add warehouse option
             case R.id.wom_add:
-                Intent i=new Intent(this,WarehouseActivity.class);
-                i.putExtra("NAME", "");
-                i.putExtra("DESCRIPTION", "");
-                i.putExtra("LATITUDE", "");
-                i.putExtra("LONGITUDE", "");
-                i.putExtra("REQUEST_CODE",3);
-                startActivity(i);
-                return true;
+
+                // Start activity for result
+                Intent i = new Intent(this, WarehouseActivity.class);
+
+                i.putExtra("REQUEST_CODE", WarehouseActivity.REQUEST_CODE_ADD);
+                startActivityForResult(i, WarehouseActivity.REQUEST_CODE_ADD);
+                break;
 
             case R.id.wom_logout:
-                i = new Intent(this,LoginActivity.class);
+                i = new Intent(this, LoginActivity.class);
                 //TODO Logout operation
                 startActivity(i);
                 finish();
-                return true;
+                break;
 
             default:
                 return super.onOptionsItemSelected(item);
         }
+
+        return true;
     }
 
     /**
      * On context menu item selection.
+     *
      * @param item The selected item.
      * @return boolean
      */
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        int pos = info.position;
+        final int pos = info.position;
+
         Intent i;
-        WarehouseListItem p = (WarehouseListItem) wAdapter.getItem(pos);
+
+        // Get item id
         switch (item.getItemId()) {
+
+            // On edit option
             case R.id.wcm_view:
-                Toast.makeText(WarehousesTableActivity.this, "View",Toast.LENGTH_LONG).show();
+
                 i = new Intent(getApplicationContext(), WarehouseActivity.class);
+
                 i.putExtra("NAME", feed.get(pos).get_name());
                 i.putExtra("DESCRIPTION", feed.get(pos).get_description());
                 i.putExtra("LATITUDE", feed.get(pos).get_lat());
                 i.putExtra("LONGITUDE", feed.get(pos).get_long());
-                i.putExtra("REQUEST_CODE",1);
-                startActivity(i);
-                return true;
+
+                i.putExtra("REQUEST_CODE", WarehouseActivity.REQUEST_CODE_VIEW);
+                startActivityForResult(i, WarehouseActivity.REQUEST_CODE_VIEW);
+                break;
+
+            // On edit option
+            case R.id.wcm_edit:
+
+                i = new Intent(getApplicationContext(), WarehouseActivity.class);
+
+                i.putExtra("WAREHOUSE_ID", feed.get(pos).get_id());
+                i.putExtra("NAME", feed.get(pos).get_name());
+                i.putExtra("DESCRIPTION", feed.get(pos).get_description());
+                i.putExtra("LATITUDE", feed.get(pos).get_lat());
+                i.putExtra("LONGITUDE", feed.get(pos).get_long());
+
+                i.putExtra("REQUEST_CODE", WarehouseActivity.REQUEST_CODE_EDIT);
+                startActivityForResult(i, WarehouseActivity.REQUEST_CODE_EDIT);
+                break;
+
+            // On delete option
+            case R.id.wcm_delete:
+
+                new AlertDialog.Builder(this)
+                        .setTitle("Delete Warehouse")
+                        .setMessage("Do you want to delete this warehouse?")
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface dialog, int whichButton) {
+
+                                WarehousesTableActivity.this.deleteWarehouse(feed.get(pos).get_id());
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, null).show();
+                break;
+
             default:
                 return super.onContextItemSelected(item);
+        }
+
+        return true;
+    }
+
+    /**
+     * On warehouse list view item click go into list of items.
+     *
+     * @param parent   The parent view.
+     * @param view     The view.
+     * @param position The position of the item.
+     * @param id       The id of the item.
+     */
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+        Intent i = new Intent(getApplicationContext(), InventoryActivity.class);
+
+        i.putExtra("WAREHOUSE_ID", feed.get(position).get_id());
+
+        startActivity(i);
+    }
+
+    /**
+     * On activity finish.
+     *
+     * @param requestCode The activity request code.
+     * @param resultCode  The activity result code.
+     * @param data        The intent.
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+
+        switch (requestCode) {
+
+            // Added warehouse
+            case WarehouseActivity.REQUEST_CODE_ADD:
+
+                // If success
+                if (resultCode == WarehouseActivity.RESULT_CODE_SUCCESS) {
+
+                    // Refresh warehouses list
+                    this.getWarehouses();
+                    Toast.makeText(this, "Warehouse created successfully.", Toast.LENGTH_SHORT).show();
+                }
+
+                break;
+
+            // Edited warehouse
+            case WarehouseActivity.REQUEST_CODE_EDIT:
+
+                // If success
+                if (resultCode == WarehouseActivity.RESULT_CODE_SUCCESS) {
+
+                    // Refresh warehouses list
+                    this.getWarehouses();
+                    Toast.makeText(this, "Warehouse edited successfully.", Toast.LENGTH_SHORT).show();
+                }
+
+            default:
+                break;
         }
     }
 
     /**
-     * Update the warehouses list.
+     * Update the warehouses list view.
      */
     public void updateDisplay() {
 
@@ -176,11 +282,12 @@ public class WarehousesTableActivity extends AppCompatActivity implements Adapte
 
     /**
      * Updates the activity's warehouse list.
+     *
      * @return boolean
      */
     private void getWarehouses() {
 
-        Request req = this.apiHandler.getWarehouses();
+        Request req = this.apiHandler.warehouse().get();
 
         this.client.newCall(req).enqueue(new Callback() {
             @Override
@@ -215,7 +322,8 @@ public class WarehousesTableActivity extends AppCompatActivity implements Adapte
 
                                 JSONObject wh = warehouses.getJSONObject(i);
                                 WarehousesTableActivity.this.feed.add(
-                                        new WarehouseListItem(
+                                        new Warehouse(
+                                                wh.getInt("id"),
                                                 wh.getString("name"),
                                                 wh.getString("description"),
                                                 wh.getString("latitude"),
@@ -274,23 +382,78 @@ public class WarehousesTableActivity extends AppCompatActivity implements Adapte
     }
 
     /**
-     * On warehouse list view item click.
-     * @param parent The parent view.
-     * @param view The view.
-     * @param position The position of the item.
-     * @param id The id of the item.
+     * Deletes a warehouse.
+     *
+     * @param id The warehouse id.
      */
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    private void deleteWarehouse(int id) {
 
-        Intent i = new Intent(getApplicationContext(), InventoryActivity.class);
+        Request req = this.apiHandler.warehouse().delete(id);
 
-        i.putExtra("NAME", feed.get(position).get_name());
-        i.putExtra("DESCRIPTION", feed.get(position).get_description());
-        i.putExtra("LATITUDE", feed.get(position).get_lat());
-        i.putExtra("LONGITUDE", feed.get(position).get_long());
-        i.putExtra("REQUEST_CODE",1);
+        this.client.newCall(req).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
 
-        startActivity(i);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(WarehousesTableActivity.this, "Sad life :(", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+
+                switch (response.code()) {
+
+                    // Success on the request
+                    case 200:
+
+                        // Update Ui
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(WarehousesTableActivity.this, "Warehouse deleted", Toast.LENGTH_SHORT).show();
+                                WarehousesTableActivity.this.getWarehouses();
+                            }
+                        });
+
+                        break;
+
+                    // Unauthorized
+                    case 401:
+                        // TODO: Refresh user token
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(WarehousesTableActivity.this, "Unauthorized", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        break;
+
+                    // Not Found
+                    case 404:
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(WarehousesTableActivity.this, "Warehouse Not Found", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        break;
+
+                    // Internal Server Error
+                    case 500:
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(WarehousesTableActivity.this, "Internal Server Error", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        break;
+                }
+            }
+        });
     }
 }

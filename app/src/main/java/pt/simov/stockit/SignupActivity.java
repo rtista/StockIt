@@ -2,13 +2,12 @@ package pt.simov.stockit;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -31,6 +30,11 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
     private OkHttpClient client = HttpClient.getInstance();
 
     /**
+     * API Handler allows StockIt backend API communication.
+     */
+    private final ApiHandler apiHandler = ApiHandler.getInstance();
+
+    /**
      * Main method runs on activity start.
      *
      * @param savedInstanceState
@@ -41,8 +45,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_signup);
 
         setTitle(R.string.title_signup);
-        EditText name = findViewById(R.id.input_username);
-
 
         Button signupBtn = findViewById(R.id.btn_signup);
         signupBtn.setOnClickListener(this);
@@ -61,7 +63,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         String email = ((EditText) findViewById(R.id.input_email)).getText().toString();
 
         try {
-            Request req = ApiHandler.getInstance().createAccount(username, password, email);
+            Request req = this.apiHandler.user().post(username, password, email);
 
             // Execute the request
             client.newCall(req).enqueue(new Callback() {

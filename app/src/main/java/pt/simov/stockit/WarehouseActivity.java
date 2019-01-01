@@ -1,26 +1,19 @@
 package pt.simov.stockit;
 
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -29,15 +22,51 @@ import okhttp3.Request;
 import okhttp3.Response;
 import pt.simov.stockit.core.ApiHandler;
 import pt.simov.stockit.core.http.HttpClient;
-import pt.simov.stockit.domain.Warehouse;
 
 public class WarehouseActivity extends AppCompatActivity implements View.OnClickListener {
 
-    Intent in;
-    String name, description, lat, lon;
-    EditText name_et, description_et, lat_et, lon_et;
-    Button btn;
-    TextView tv;
+    /**
+     * Activity Result Codes
+     */
+    public static final int RESULT_CODE_FAILURE = 0;
+    public static final int RESULT_CODE_SUCCESS = 1;
+
+    /**
+     * The request codes available for this activity.
+     */
+    public static final int REQUEST_CODE_VIEW = 1;
+    public static final int REQUEST_CODE_EDIT = 2;
+    public static final int REQUEST_CODE_ADD = 3;
+
+    /**
+     * The intent.
+     */
+    private Intent in;
+
+    /**
+     * The fields
+     */
+    private String name, description, lat, lon;
+
+    /**
+     * The text fields
+     */
+    private EditText name_et, description_et, lat_et, lon_et;
+
+    /**
+     * The button
+     */
+    private Button btn;
+
+    /**
+     * The text view.
+     */
+    private TextView tv;
+
+    /**
+     * Request code
+     */
+    private int requestCode;
 
     /**
      * The StockIt backend API handler.
@@ -59,7 +88,8 @@ public class WarehouseActivity extends AppCompatActivity implements View.OnClick
         setContentView(R.layout.activity_warehouse);
 
         in = getIntent();
-        int request =  in.getIntExtra("REQUEST_CODE",1);
+
+        this.requestCode = in.getIntExtra("REQUEST_CODE", REQUEST_CODE_VIEW);
         name = in.getStringExtra("NAME");
         description = in.getStringExtra("DESCRIPTION");
         lat = in.getStringExtra("LATITUDE");
@@ -71,132 +101,217 @@ public class WarehouseActivity extends AppCompatActivity implements View.OnClick
         lon_et = findViewById(R.id.warehouse_long);
         btn = findViewById(R.id.btn_action);
         tv = findViewById(R.id.warehouse_title);
-        // IF VIEWING
-        setActivity(request);
-    }
 
-    /**
-     * Options menu creation.
-     * @param menu The menu to be inflated.
-     * @return boolean
-     */
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.warehouse_optionsmenu, menu);
-        return true;
-    }
-
-    /**
-     * Options menu item selection handler.
-     * @param item The selected item
-     * @return boolean
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {// Handle item selection
-        switch (item.getItemId()) {
-            case R.id.wom_view_map:
-                Toast.makeText(this, "View in Map",Toast.LENGTH_LONG).show();
-                return true;
-            case R.id.wom_edit:
-                setActivity(2);
-                btn.setOnClickListener(new View.OnClickListener() {
-                    public void onClick(View arg0) {
-                        Toast.makeText(WarehouseActivity.this, "Save",Toast.LENGTH_LONG).show();
-                        name = name_et.getText().toString();
-                        description = description_et.getText().toString();
-                        lat = lat_et.getText().toString();
-                        lon = lon_et.getText().toString();
-                        //TODO save edited information
-                        setActivity(1);
-                    }
-                });
-                return true;
-            case R.id.wom_delete:
-                new AlertDialog.Builder(this)
-                        .setTitle("Delete Warehouse")
-                        .setMessage("Do you want to delete this warehouse?")
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                Intent i = new Intent(WarehouseActivity.this, WarehousesTableActivity.class);
-                                startActivity(i);
-                                //TODO remove warehouse from database
-                                Toast.makeText(WarehouseActivity.this, "Warehouse deleted from database", Toast.LENGTH_SHORT).show();
-                            }})
-                        .setNegativeButton(android.R.string.no, null).show();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
+        // Set activity based on request code
+        setActivity();
     }
 
     /**
      * Sets the activity components for the purpose it's being launched for.
-     * @param request The intent's request code.
      */
-    private void setActivity(int request){
+    private void setActivity() {
 
-        switch(request) {
+        switch (this.requestCode) {
 
             // View
-            case 1:
+            case REQUEST_CODE_VIEW:
+
+                // Disable Text fields
                 name_et.setEnabled(false);
                 description_et.setEnabled(false);
                 lat_et.setEnabled(false);
                 lon_et.setEnabled(false);
-                btn.setVisibility(View.GONE);
+
+                // Set Activity Title
                 setTitle(R.string.title_view_warehouse);
-                //TODO get info
                 tv.setText("View Warehouse");
+
+                // Set Text fields content
                 name_et.setText(name);
                 description_et.setText(description);
                 lat_et.setText(lat);
                 lon_et.setText(lon);
+
+                btn.setText("Back");
                 break;
 
             // Edit
-            case 2:
+            case REQUEST_CODE_EDIT:
+
+                // Enable text field editing
                 name_et.setEnabled(true);
                 description_et.setEnabled(true);
                 lat_et.setEnabled(true);
                 lon_et.setEnabled(true);
-                btn.setVisibility(View.VISIBLE);
+
+                // Set activity title
                 setTitle(R.string.title_edit_warehouse);
-                //TODO get info
                 tv.setText("Edit Warehouse");
+
+                // Set text fields content
                 name_et.setText(name);
                 description_et.setText(description);
                 lat_et.setText(lat);
                 lon_et.setText(lon);
-                btn.setText("Confirm");
+
+                btn.setText("Save");
                 break;
 
             // Create
-            case 3:
-                tv.setText("New Warehouse");
+            case REQUEST_CODE_ADD:
+
+                // Enable text fields
                 name_et.setEnabled(true);
                 description_et.setEnabled(true);
                 lat_et.setEnabled(true);
                 lon_et.setEnabled(true);
-                btn.setVisibility(View.VISIBLE);
+
+                // Set activity title
+                tv.setText("New Warehouse");
                 setTitle(R.string.title_add_warehouse);
-                //TODO get info
-                name_et.setText("");
+                // Set
+                /*name_et.setText("");
                 description_et.setText("");
                 lat_et.setText("");
-                lon_et.setText("");
-                btn.setText("Add Warehouse");
-                btn.setOnClickListener(this);
+                lon_et.setText("");*/
+
+                btn.setText("Create");
                 break;
+        }
+
+        // Set on click button listener
+        btn.setOnClickListener(this);
+    }
+
+    /**
+     * On click listener.
+     *
+     * @param v The view.
+     */
+    @Override
+    public void onClick(View v) {
+
+        // Read fields content from the UI
+        String name = this.name_et.getText().toString();
+        String description = this.description_et.getText().toString();
+        String lat = this.lat_et.getText().toString();
+        String lon = this.lon_et.getText().toString();
+
+        switch (this.requestCode) {
+
+            // View Warehouse
+            case REQUEST_CODE_VIEW:
+
+                // Finish activity
+                finish();
+                break;
+
+            // Add Warehouse
+            case REQUEST_CODE_ADD:
+                addWarehouse(name, description, lat, lon);
+                break;
+
+            // Edit Warehouse
+            case REQUEST_CODE_EDIT:
+                int id = this.in.getIntExtra("WAREHOUSE_ID", -1);
+                editWarehouse(id, name, description, lat, lon);
+                break;
+        }
+    }
+
+    /**
+     * Creates a warehouse.
+     *
+     * @param name        The warehouse name.
+     * @param description The warehouse description.
+     * @param lat         The warehouse latitude.
+     * @param lon         The warehouse longitude.
+     */
+    private void addWarehouse(String name, String description, String lat, String lon) {
+
+        // Check for latitude and longitude
+        if (lat.isEmpty() || lon.isEmpty()) {
+
+            // Create request
+            try {
+                Request req = this.apiHandler.warehouse().post(name, description);
+
+                this.handleRequest(req);
+
+            } catch (JSONException e) {
+                Log.e("CREATE_WAREHOUSE", "JsonException");
+            }
+
+        } else {
+
+            float latitude = Float.parseFloat(lat);
+            float longitude = Float.parseFloat(lon);
+
+            // Create request
+            try {
+                Request req = this.apiHandler.warehouse().post(name, description, latitude, longitude);
+
+                this.handleRequest(req);
+
+            } catch (JSONException e) {
+                Log.e("CREATE_WAREHOUSE", "JsonException");
+            }
+        }
+    }
+
+    /**
+     * Modifies the warehouse.
+     *
+     * @param id          The warehouse id.
+     * @param name        The warehouse name.
+     * @param description The warehouse description.
+     * @param lat         The warehouse latitude.
+     * @param lon         The warehouse longitude.
+     */
+    private void editWarehouse(int id, String name, String description, String lat, String lon) {
+
+        HashMap<String, Object> map = new HashMap<>();
+
+        if (name != null && !name.isEmpty()) {
+
+            map.put("name", name);
+        }
+
+        if (description != null && !description.isEmpty()) {
+
+            map.put("description", description);
+        }
+
+        if (lat != null) {
+
+            map.put("latitude", lat);
+        }
+
+        if (lon != null) {
+
+            map.put("longitude", lon);
+        }
+
+        // If there are modified items
+        if (map.size() > 0) {
+
+            try {
+
+                Request req = this.apiHandler.warehouse().patch(id, map);
+                this.handleRequest(req);
+
+            } catch (JSONException e) {
+
+                Log.e("EDIT_WAREHOUSE", "JSON Exception: " + e.getMessage());
+            }
         }
     }
 
     /**
      * Creates a warehouse via REST API.
-     * @param req
+     * @param req The request to be made.
      */
-    private void createWarehouse(Request req) {
+    private void handleRequest(Request req) {
 
         this.client.newCall(req).enqueue(new Callback() {
             @Override
@@ -211,20 +326,27 @@ public class WarehouseActivity extends AppCompatActivity implements View.OnClick
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onResponse(Call call, Response response) {
 
                 switch (response.code()) {
 
                     // Success on the request
+                    case 200:
+
+                        setResult(RESULT_CODE_SUCCESS, WarehouseActivity.this.getIntent());
+
+                        // Finish activity
+                        finish();
+
+                        break;
+
+                    // Success on the request
                     case 201:
 
-                        // Warehouse Successfully created
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(WarehouseActivity.this, "Warehouse Successfully Created", Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                        setResult(RESULT_CODE_SUCCESS, WarehouseActivity.this.getIntent());
+
+                        // Finish activity
+                        finish();
 
                         break;
 
@@ -237,6 +359,7 @@ public class WarehouseActivity extends AppCompatActivity implements View.OnClick
                                 Toast.makeText(WarehouseActivity.this, "Unauthorized", Toast.LENGTH_SHORT).show();
                             }
                         });
+                        Log.e("WAREHOUSE_CRUD", "Unauthorized");
                         break;
 
                     // Bad Request
@@ -247,67 +370,20 @@ public class WarehouseActivity extends AppCompatActivity implements View.OnClick
                                 Toast.makeText(WarehouseActivity.this, "Bad Request", Toast.LENGTH_SHORT).show();
                             }
                         });
+                        Log.e("WAREHOUSE_CRUD", "Bad Request");
                         break;
 
                     // Internal Server Error
                     case 500:
 
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(WarehouseActivity.this, "Internal Server Error", Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                        setResult(RESULT_CODE_FAILURE, WarehouseActivity.this.getIntent());
 
                         break;
 
                     default:
-                        Log.e("CREATE_WAREHOUSE", "Unhandled HTTP status code: " + response.code());
+                        Log.e("WAREHOUSE_CRUD", "Unhandled HTTP status code: " + response.code());
                 }
             }
         });
-    }
-
-    /**
-     * On click listener.
-     * @param v The view.
-     */
-    @Override
-    public void onClick(View v) {
-
-        // Read fields content from the UI
-        String name = this.name_et.getText().toString();
-        String description = this.description_et.getText().toString();
-        String lat = this.lat_et.getText().toString();
-        String lon = this.lon_et.getText().toString();
-
-        // Check for latitude and longitude
-        if (lat.isEmpty() || lon.isEmpty()) {
-
-            // Create request
-            try {
-                Request req = this.apiHandler.createWarehouse(name, description);
-
-                this.createWarehouse(req);
-
-            } catch (JSONException e) {
-                Log.e("CREATE_WAREHOUSE", "JsonException");
-            }
-
-        } else {
-
-            float latitude = Float.parseFloat(lat);
-            float longitude = Float.parseFloat(lon);
-
-            // Create request
-            try {
-                Request req = this.apiHandler.createWarehouse(name, description, latitude, longitude);
-
-                this.createWarehouse(req);
-
-            } catch (JSONException e) {
-                Log.e("CREATE_WAREHOUSE", "JsonException");
-            }
-        }
     }
 }

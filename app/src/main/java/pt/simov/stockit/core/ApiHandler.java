@@ -1,10 +1,7 @@
 package pt.simov.stockit.core;
 
 import pt.simov.stockit.core.api.AuthController;
-
-import org.json.JSONException;
-
-import okhttp3.Request;
+import pt.simov.stockit.core.api.ItemController;
 import pt.simov.stockit.core.api.UserController;
 import pt.simov.stockit.core.api.WarehouseController;
 
@@ -19,18 +16,28 @@ public class ApiHandler {
      * The API URL location.
      * Todo: Make this config changeable
      */
-    private final String url = "http://172.18.159.161:8000/api";
+    // private final String url = "http://172.18.158.14:8000/api";
+    private final String url = "http://192.168.1.7:8000/api";
 
     /**
-     * The user authentication token.
+     * The handler's item controller.
      */
-    private String authToken = null;
+    private AuthController authController;
 
     /**
-     * Private constructor.
+     * The handler's item controller.
      */
-    private ApiHandler() {
-    }
+    private UserController userController;
+
+    /**
+     * The handler's item controller.
+     */
+    private WarehouseController warehouseController;
+
+    /**
+     * The handler's item controller.
+     */
+    private ItemController itemController;
 
     /**
      * Returns the singleton instance.
@@ -47,6 +54,15 @@ public class ApiHandler {
     }
 
     /**
+     * Private constructor.
+     */
+    private ApiHandler() {
+
+        this.authController = new AuthController();
+        this.userController = new UserController();
+    }
+
+    /**
      * Returns the singleton instance.
      * @return ApiHandler
      */
@@ -56,79 +72,42 @@ public class ApiHandler {
     }
 
     /**
-     * Authenticates the user against the API, returns the bearer token.
-     * @param username The username for the user at hand.
-     * @param password The password for the given username.
-     * @return boolean
-     * @throws JSONException
-     */
-    public Request authenticate(String username, String password) throws JSONException {
-
-        AuthController controller = new AuthController();
-
-        return controller.bearer(username, password);
-    }
-
-    /**
-     * Set the user authentication token.
+     * Returns the Authentication Controller.
      *
-     * @param authToken The user authentication token.
+     * @return AuthController
      */
-    public void setAuthToken(String authToken) {
+    public AuthController auth() {
 
-        instance.authToken = authToken;
+        return this.authController;
     }
 
     /**
-     * Get the user authentication token.
+     * Returns the User Controller.
      *
-     * @return The user authenticaton token.
+     * @return UserController
      */
-    public String getAuthToken() {
+    public UserController user() {
 
-        return instance.authToken;
+        return this.userController;
     }
 
     /**
-     * Create a user account.
-     * @param username The username.
-     * @param password The password.
-     * @param email The email.
-     * @return Request to be added to the queue.
-     * @throws JSONException
+     * Returns the Warehouse Controller.
+     *
+     * @return WarehouseController
      */
-    public Request createAccount(String username, String password, String email) throws JSONException {
+    public WarehouseController warehouse() {
 
-        UserController controller = new UserController();
-
-        return controller.newUser(username, password, email);
+        return new WarehouseController(this.authController.getAuthorization());
     }
 
     /**
-     * Returns the user warehouses.
-     * @return Request to be added to the queue.
+     * Returns the Item Controller.
+     *
+     * @return ItemController
      */
-    public Request getWarehouses() {
+    public ItemController item() {
 
-        WarehouseController controller = new WarehouseController(this.getAuthToken());
-
-        return controller.getWarehouses();
-    }
-
-    /**
-     * Creates a warehouse in the user account.
-     * @param name The warehouse name
-     * @param description The warehouse description
-     * @param latitude The latitude of the warehouse
-     * @param longitude The longitude of the warehouse
-     * @return Request The request object to be queued on the request queue.
-     * @throws JSONException
-     */
-    public Request createWarehouse(String name, String description, float latitude,
-                                   float longitude) throws JSONException {
-
-        WarehouseController controller = new WarehouseController(this.getAuthToken());
-
-        return controller.newWarehouse(name, description, latitude, longitude);
+        return new ItemController(this.authController.getAuthorization());
     }
 }

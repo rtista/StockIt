@@ -1,19 +1,27 @@
-package pt.simov.stockit;
+package pt.simov.stockit.core.domain;
 
-public class WarehouseListItem {
+public class Warehouse {
+
+    private int _id;
         private String _name = null;
         private String _description = null;
         private String _lat = null;
         private String _long= null;
 
-
-    WarehouseListItem()	{	}
-
-    WarehouseListItem(String name, String description, String lat, String lon)	{
+    public Warehouse(int id, String name, String description, String lat, String lon) {
+        _id = id;
         _name = name;
         _description = description;
         _lat = lat;
         _long = lon;
+    }
+
+    public int get_id() {
+        return _id;
+    }
+
+    public void set_id(int _id) {
+        this._id = _id;
     }
 
     public String get_name() {
