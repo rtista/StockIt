@@ -29,6 +29,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import pt.simov.stockit.core.ApiHandler;
+import pt.simov.stockit.core.domain.Warehouse;
 import pt.simov.stockit.core.http.HttpClient;
 
 public class WarehousesTableActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
@@ -46,7 +47,7 @@ public class WarehousesTableActivity extends AppCompatActivity implements Adapte
     /**
      * The list which contains the warehouse entities.
      */
-    private ArrayList<WarehouseListItem> feed = new ArrayList<>();
+    private ArrayList<Warehouse> feed = new ArrayList<>();
 
     /**
      * The list view adapter.
@@ -321,7 +322,7 @@ public class WarehousesTableActivity extends AppCompatActivity implements Adapte
 
                                 JSONObject wh = warehouses.getJSONObject(i);
                                 WarehousesTableActivity.this.feed.add(
-                                        new WarehouseListItem(
+                                        new Warehouse(
                                                 wh.getInt("id"),
                                                 wh.getString("name"),
                                                 wh.getString("description"),

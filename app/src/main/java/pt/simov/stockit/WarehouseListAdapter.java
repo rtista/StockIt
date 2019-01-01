@@ -1,21 +1,20 @@
 package pt.simov.stockit;
 
 import android.content.Context;
-import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
 
-public class WarehouseListAdapter extends BaseAdapter {
-    private final List<WarehouseListItem> items;
+import pt.simov.stockit.core.domain.Warehouse;
 
-    public WarehouseListAdapter(final List<WarehouseListItem> items) {
+public class WarehouseListAdapter extends BaseAdapter {
+    private final List<Warehouse> items;
+
+    public WarehouseListAdapter(final List<Warehouse> items) {
         this.items = items;
     }
 
@@ -27,7 +26,7 @@ public class WarehouseListAdapter extends BaseAdapter {
 
     public View getView(int arg0, View arg1, ViewGroup arg2) {
         View itemView = null;
-        final WarehouseListItem row = this.items.get(arg0);
+        final Warehouse row = this.items.get(arg0);
         if (arg1 == null) {
             LayoutInflater inflater = (LayoutInflater) arg2.getContext()
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);

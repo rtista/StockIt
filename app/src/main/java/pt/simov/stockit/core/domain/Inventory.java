@@ -1,6 +1,6 @@
-package pt.simov.stockit;
+package pt.simov.stockit.core.domain;
 
-public class InventoryListItem {
+public class Inventory {
 
     /**
      * The item id.
@@ -48,7 +48,7 @@ public class InventoryListItem {
      * @param section      The item section.
      * @param min_quantity The item alert/minimum quantity.
      */
-    public InventoryListItem(int id, String name, String description, int quantity, String section, String barcode, int min_quantity) {
+    public Inventory(int id, String name, String description, int quantity, String section, String barcode, int min_quantity) {
         this.id = id;
         this.name = name;
         this.description = description;

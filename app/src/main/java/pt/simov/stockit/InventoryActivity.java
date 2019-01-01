@@ -28,6 +28,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import pt.simov.stockit.core.ApiHandler;
+import pt.simov.stockit.core.domain.Inventory;
 import pt.simov.stockit.core.http.HttpClient;
 
 public class InventoryActivity extends AppCompatActivity {
@@ -45,7 +46,7 @@ public class InventoryActivity extends AppCompatActivity {
     /**
      * The list which contains the warehouse entities.
      */
-    private ArrayList<InventoryListItem> feed = new ArrayList<>();
+    private ArrayList<Inventory> feed = new ArrayList<>();
 
     /**
      * The list view adapter.
@@ -312,7 +313,7 @@ public class InventoryActivity extends AppCompatActivity {
 
                                 JSONObject it = items.getJSONObject(i);
                                 InventoryActivity.this.feed.add(
-                                        new InventoryListItem(
+                                        new Inventory(
                                                 it.getInt("id"),
                                                 it.getString("name"),
                                                 it.getString("description"),
