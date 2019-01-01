@@ -21,7 +21,6 @@ import java.util.List;
 
 public class BarcodeActivity extends AppCompatActivity {
 
-    private static final String TAG = BarcodeActivity.class.getSimpleName();
     private DecoratedBarcodeView barcodeView;
     private BeepManager beepManager;
     private String lastText;

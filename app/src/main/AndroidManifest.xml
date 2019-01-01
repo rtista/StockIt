@@ -11,7 +11,8 @@
         android:roundIcon="@mipmap/logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:usesCleartextTraffic="true">
+        android:usesCleartextTraffic="true"
+        android:hardwareAccelerated="true">
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,7 +24,8 @@
         <activity android:name=".InventoryActivity" />
         <activity android:name=".WarehousesTableActivity" />
         <activity android:name=".WarehouseActivity" />
-        <activity android:name=".InventoryCrudActivity"></activity>
+        <activity android:name=".InventoryCrudActivity" />
+        <activity android:name=".BarcodeActivity"></activity>
     </application>
 
 </manifest>

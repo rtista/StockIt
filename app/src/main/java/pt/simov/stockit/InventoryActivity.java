@@ -126,7 +126,7 @@ public class InventoryActivity extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
 
-            // On Add warehouse option
+            // On Add item option
             case R.id.iom_add:
 
                 // Start activity for result
@@ -137,6 +137,11 @@ public class InventoryActivity extends AppCompatActivity {
                 i.putExtra("REQUEST_CODE", InventoryCrudActivity.REQUEST_CODE_ADD);
                 startActivityForResult(i, InventoryCrudActivity.REQUEST_CODE_ADD);
                 break;
+
+            case R.id.iom_barcode:
+
+                Intent iBarcode = new Intent(this, BarcodeActivity.class);
+                startActivity(iBarcode);
 
             default:
                 return super.onOptionsItemSelected(item);
