@@ -7,45 +7,52 @@
         android:id="@+id/barcode_scanner"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_above="@+id/buttonsLayout"
+        android:layout_above="@+id/labelLayout"
         android:layout_alignParentTop="true">
 
     </com.journeyapps.barcodescanner.DecoratedBarcodeView>
 
     <LinearLayout
+        android:background="@color/colorPrimary"
         android:orientation="vertical"
+        android:gravity="center"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="100dp"
         android:layout_alignParentBottom="true"
-        android:id="@+id/buttonsLayout"
+        android:id="@+id/labelLayout"
         android:layout_toLeftOf="@+id/centerHorizont">
 
-        <Button
+        <TextView
+            android:textColor="@color/background"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Pause"
-            android:onClick="pause" />
+            android:textAlignment="center"
+            android:textSize="20dp"
+            android:text="Last Value:"/>
 
-        <Button
+        <TextView
+            android:textColor="@color/background"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Resume"
-            android:onClick="resume" />
+            android:textAlignment="center"
+            android:textSize="22dp"
+            android:id="@+id/lastValue"/>
     </LinearLayout>
 
     <View
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_centerHorizontal="true"
-        android:id="@+id/centerHorizont" />
+        android:id="@+id/centerHorizont"/>
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_toRightOf="@id/centerHorizont"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_alignTop="@id/buttonsLayout"
+        android:layout_alignTop="@id/labelLayout"
         android:id="@+id/barcodePreview" />
 
 </RelativeLayout>

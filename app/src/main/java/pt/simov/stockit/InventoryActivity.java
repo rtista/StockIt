@@ -138,10 +138,25 @@ public class InventoryActivity extends AppCompatActivity {
                 startActivityForResult(i, InventoryCrudActivity.REQUEST_CODE_ADD);
                 break;
 
-            case R.id.iom_barcode:
+            case R.id.iom_barcode_read:
 
-                Intent iBarcode = new Intent(this, BarcodeActivity.class);
-                startActivity(iBarcode);
+                Intent iBarcodeRead = new Intent(this, BarcodeActivity.class);
+
+                iBarcodeRead.putExtra("WAREHOUSE_ID", this.wid);
+
+                iBarcodeRead.putExtra("REQUEST_CODE", BarcodeActivity.REQUEST_CODE_READ);
+                startActivity(iBarcodeRead);
+                break;
+
+            case R.id.iom_barcode_write:
+
+                Intent iBarcodeWrite = new Intent(this, BarcodeActivity.class);
+
+                iBarcodeWrite.putExtra("WAREHOUSE_ID", this.wid);
+
+                iBarcodeWrite.putExtra("REQUEST_CODE", BarcodeActivity.REQUEST_CODE_WRITE);
+                startActivity(iBarcodeWrite);
+                break;
 
             default:
                 return super.onOptionsItemSelected(item);

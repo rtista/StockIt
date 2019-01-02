@@ -4,6 +4,9 @@
         android:id="@+id/iom_add"
         android:title="Add Item"/>
     <item
-        android:id="@+id/iom_barcode"
-        android:title="Barcode"/>
+        android:id="@+id/iom_barcode_read"
+        android:title="Barcode Read"/>
+    <item
+        android:id="@+id/iom_barcode_write"
+        android:title="Barcode Write"/>
 </menu>

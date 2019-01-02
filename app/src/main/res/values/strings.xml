@@ -14,6 +14,7 @@
     <string name="title_edit_item">Stock.It - Edit Item</string>
     <string name="title_add_item">Stock.It - Add Item</string>
     <string name="title_delete_item">Stock.It - Delete Item</string>
-    <string name="title_activity_barcode">Stock.It - Barcode</string>
+    <string name="title_activity_barcode_Read">Stock.It - Barcode Read</string>
+    <string name="title_activity_barcode_Write">Stock.It - Barcode Write</string>
 
 </resources>
