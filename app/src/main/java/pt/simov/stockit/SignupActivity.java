@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -45,6 +46,18 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_signup);
 
         setTitle(R.string.title_signup);
+
+        TextView login = findViewById(R.id.link_login);
+
+        login.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View arg0) {
+                try {
+                    finish();
+                } catch (ActivityNotFoundException ex) {
+                    Toast.makeText(SignupActivity.this, "Error in Login", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
 
         Button signupBtn = findViewById(R.id.btn_signup);
         signupBtn.setOnClickListener(this);
