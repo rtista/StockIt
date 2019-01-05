@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:textAlignment="center"
             android:textSize="20dp"
-            android:text="Last Value:"/>
+            android:id="@+id/labelLastValue"/>
 
         <TextView
             android:textColor="@color/background"

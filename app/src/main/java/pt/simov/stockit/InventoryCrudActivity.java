@@ -175,6 +175,12 @@ public class InventoryCrudActivity extends AppCompatActivity implements View.OnC
                 this.section_et.setEnabled(true);
                 this.min_quant_et.setEnabled(true);
 
+                //Get Info
+                barcode = this.getIntent().getStringExtra("BARCODE");
+                if (!barcode.isEmpty()) {
+                    this.barcode_et.setText(barcode);
+                }
+
                 // Set default text field content
                 this.quant_et.setText("0");
                 this.min_quant_et.setText("0");
