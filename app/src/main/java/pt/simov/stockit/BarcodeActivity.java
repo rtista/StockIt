@@ -7,7 +7,6 @@ import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +35,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import pt.simov.stockit.core.ApiHandler;
+import pt.simov.stockit.core.domain.Inventory;
 import pt.simov.stockit.core.http.HttpClient;
 
 public class BarcodeActivity extends AppCompatActivity {
@@ -66,8 +66,7 @@ public class BarcodeActivity extends AppCompatActivity {
      */
     private int wid;
 
-    private int ITEM_ID = -1;
-    private int ITEM_ID_QUANTITY = -1;
+    private Inventory itemFound;
 
     private DecoratedBarcodeView barcodeView;
     private BeepManager beepManager;
@@ -93,9 +92,22 @@ public class BarcodeActivity extends AppCompatActivity {
                     beepManager.playBeepSoundAndVibrate();
 
                     verifyValue();
-                    SystemClock.sleep(500);
+                    SystemClock.sleep(750);
 
-                    if(ITEM_ID != -1){
+                    if(itemFound != null){
+
+                        Intent iViewItem = new Intent(getApplicationContext(), InventoryCrudActivity.class);
+
+                        iViewItem.putExtra("WAREHOUSE_ID", wid);
+                        iViewItem.putExtra("NAME", itemFound.getName());
+                        iViewItem.putExtra("DESCRIPTION", itemFound.getDescription());
+                        iViewItem.putExtra("QUANTITY", itemFound.getQuantity());
+                        iViewItem.putExtra("BARCODE", itemFound.getBarcode());
+                        iViewItem.putExtra("SECTION", itemFound.getSection());
+                        iViewItem.putExtra("MIN_QUANTITY", itemFound.getMin_quantity());
+
+                        iViewItem.putExtra("REQUEST_CODE", InventoryCrudActivity.REQUEST_CODE_VIEW);
+                        startActivityForResult(iViewItem, InventoryCrudActivity.REQUEST_CODE_VIEW);
 
                         labelLastValue.setText("Last Value:");
                         lastValue.setText(barcodeValue);
@@ -103,11 +115,6 @@ public class BarcodeActivity extends AppCompatActivity {
                         //Added preview of scanned barcode
                         imageView.setImageBitmap(result.getBitmapWithResultPoints(Color.YELLOW));
 
-                        Intent iViewItem = new Intent(getApplicationContext(), InventoryCrudActivity.class);
-
-                        iViewItem.putExtra("WAREHOUSE_ID", wid);
-                        iViewItem.putExtra("REQUEST_CODE", InventoryCrudActivity.REQUEST_CODE_VIEW);
-                        startActivityForResult(iViewItem, InventoryCrudActivity.REQUEST_CODE_VIEW);
                     }else{
                         labelLastValue.setText("Unknown Barcode:");
                         lastValue.setText(barcodeValue);
@@ -126,9 +133,8 @@ public class BarcodeActivity extends AppCompatActivity {
                     verifyValue();
                     SystemClock.sleep(750);
 
-                    if(ITEM_ID != -1){
+                    if(itemFound != null){
 
-                        //TODO if result.getText() exist in db, quantity +1
                         addQuantity();
                         SystemClock.sleep(500);
 
@@ -139,18 +145,19 @@ public class BarcodeActivity extends AppCompatActivity {
 
                     }else{
 
-                        labelLastValue.setText("Last Value:");
-                        lastValue.setText(barcodeValue);
-
-                        //Added preview of scanned barcode
-                        imageView.setImageBitmap(result.getBitmapWithResultPoints(Color.YELLOW));
-
                         Intent iAddItem = new Intent(BarcodeActivity.this, InventoryCrudActivity.class);
 
                         iAddItem.putExtra("WAREHOUSE_ID", wid);
                         iAddItem.putExtra("BARCODE", barcodeValue);
                         iAddItem.putExtra("REQUEST_CODE", InventoryCrudActivity.REQUEST_CODE_ADD);
                         startActivityForResult(iAddItem, InventoryCrudActivity.REQUEST_CODE_ADD);
+
+                        labelLastValue.setText("Last Value:");
+                        lastValue.setText(barcodeValue);
+
+                        //Added preview of scanned barcode
+                        imageView.setImageBitmap(result.getBitmapWithResultPoints(Color.YELLOW));
+
                     }
                     break;
             }
@@ -267,22 +274,16 @@ public class BarcodeActivity extends AppCompatActivity {
                             found = false;
                             for (int i = 0; i < items.length(); i++) {
                                 JSONObject it = items.getJSONObject(i);
-                                System.out.println("-------------------------");
-                                System.out.println(it.toString());
-                                System.out.println("-------------------------");
                                 if (it.getString("barcode").equals(barcodeValue)){
-                                    //TODO Item found return true
                                     found = true;
-                                    ITEM_ID = it.getInt("id");
-                                    ITEM_ID_QUANTITY = it.getInt("quantity");
+                                    itemFound = new Inventory(it.getInt("id"), it.getString("name"), it.getString("description"), it.getInt("quantity"), it.getString("section"), it.getString("barcode"), it.getInt("min_quantity"));
                                 }
                             }
                             if(!found){
-                                ITEM_ID = -1;
-                                ITEM_ID_QUANTITY = -1;
+                                itemFound = null;
                             }
                         } catch (JSONException e) {
-                            Log.e("ITEM_LIST", "JSON Exception: " + e.getMessage());
+                            Log.e("Find_Item", "JSON Exception: " + e.getMessage());
                         }
 
                         break;
@@ -326,22 +327,19 @@ public class BarcodeActivity extends AppCompatActivity {
     private void addQuantity() {
 
         HashMap<String, Object> map = new HashMap<>();
+        int itemQuantity = itemFound.getQuantity()+1;
 
-        ITEM_ID_QUANTITY++;
-
-        map.put("quantity", ITEM_ID_QUANTITY);
+        map.put("quantity", (itemQuantity));
 
         try {
-            Request req = this.apiHandler.item().patch(this.wid, ITEM_ID, map);
+            Request req = this.apiHandler.item().patch(this.wid, itemFound.getId(), map);
 
             this.handleRequest(req);
 
         } catch (JSONException e) {
 
-            Log.e("EDIT_ITEM", "JSON Exception: " + e.getMessage());
+            Log.e("Add_Quantity", "JSON Exception: " + e.getMessage());
         }
-
-        //TODO Add +1 to quantity
 
     }
 
@@ -397,7 +395,7 @@ public class BarcodeActivity extends AppCompatActivity {
                                 Toast.makeText(BarcodeActivity.this, "Unauthorized", Toast.LENGTH_SHORT).show();
                             }
                         });
-                        Log.e("WAREHOUSE_CRUD", "Unauthorized");
+                        Log.e("BarcodeActivity", "Unauthorized");
                         break;
 
                     // Bad Request
@@ -408,7 +406,7 @@ public class BarcodeActivity extends AppCompatActivity {
                                 Toast.makeText(BarcodeActivity.this, "Bad Request", Toast.LENGTH_SHORT).show();
                             }
                         });
-                        Log.e("WAREHOUSE_CRUD", "Bad Request");
+                        Log.e("BarcodeActivity", "Bad Request");
                         break;
 
                     // Internal Server Error
@@ -422,7 +420,7 @@ public class BarcodeActivity extends AppCompatActivity {
                         break;
 
                     default:
-                        Log.e("WAREHOUSE_CRUD", "Unhandled HTTP status code: " + response.code());
+                        Log.e("BarcodeActivity", "Unhandled HTTP status code: " + response.code());
                 }
             }
         });
