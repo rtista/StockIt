@@ -187,6 +187,7 @@ public class InventoryCrudActivity extends AppCompatActivity implements View.OnC
                 if (barcode != null && !barcode.isEmpty()) {
                     this.barcode_et.setText(barcode);
                     this.barcode_et.setEnabled(false);
+                    btnBarcode.setVisibility(View.INVISIBLE);
                 }
 
                 // Set default text field content

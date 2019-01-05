@@ -3,6 +3,7 @@ package pt.simov.stockit;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -26,6 +27,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import okhttp3.Call;
@@ -65,6 +67,7 @@ public class BarcodeActivity extends AppCompatActivity {
     private int wid;
 
     private int ITEM_ID = -1;
+    private int ITEM_ID_QUANTITY = -1;
 
     private DecoratedBarcodeView barcodeView;
     private BeepManager beepManager;
@@ -89,7 +92,10 @@ public class BarcodeActivity extends AppCompatActivity {
 
                     beepManager.playBeepSoundAndVibrate();
 
-                    if(verifyValue()){
+                    verifyValue();
+                    SystemClock.sleep(500);
+
+                    if(ITEM_ID != -1){
 
                         labelLastValue.setText("Last Value:");
                         lastValue.setText(barcodeValue);
@@ -117,10 +123,15 @@ public class BarcodeActivity extends AppCompatActivity {
 
                     beepManager.playBeepSoundAndVibrate();
 
-                    if(verifyValue()){
+                    verifyValue();
+                    SystemClock.sleep(750);
+
+                    if(ITEM_ID != -1){
 
                         //TODO if result.getText() exist in db, quantity +1
                         addQuantity();
+                        SystemClock.sleep(500);
+
                         labelLastValue.setText("Last Value:");
                         lastValue.setText(barcodeValue);
                         //Added preview of scanned barcode
@@ -226,7 +237,7 @@ public class BarcodeActivity extends AppCompatActivity {
      *
      * @return boolean
      */
-    private boolean verifyValue() {
+    private void verifyValue() {
 
         Request req = this.apiHandler.item().get(this.wid);
 
@@ -244,6 +255,7 @@ public class BarcodeActivity extends AppCompatActivity {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                boolean found;
 
                 // Success on the request
                 switch (response.code()) {
@@ -252,13 +264,22 @@ public class BarcodeActivity extends AppCompatActivity {
                         try {
 
                             JSONArray items = new JSONObject(response.body().string()).getJSONArray("items");
+                            found = false;
                             for (int i = 0; i < items.length(); i++) {
-
                                 JSONObject it = items.getJSONObject(i);
-                                if (it.getString("BARCODE").equals(barcodeValue)){
+                                System.out.println("-------------------------");
+                                System.out.println(it.toString());
+                                System.out.println("-------------------------");
+                                if (it.getString("barcode").equals(barcodeValue)){
                                     //TODO Item found return true
-                                    ITEM_ID = it.getInt("ITEM_ID");
+                                    found = true;
+                                    ITEM_ID = it.getInt("id");
+                                    ITEM_ID_QUANTITY = it.getInt("quantity");
                                 }
+                            }
+                            if(!found){
+                                ITEM_ID = -1;
+                                ITEM_ID_QUANTITY = -1;
                             }
                         } catch (JSONException e) {
                             Log.e("ITEM_LIST", "JSON Exception: " + e.getMessage());
@@ -300,28 +321,111 @@ public class BarcodeActivity extends AppCompatActivity {
             }
 
         });
-
-        // Trying to return true
-        if(ITEM_ID != -1){
-            return true;
-        }else{
-            return false;
-        }
     }
 
     private void addQuantity() {
 
-        // Create request
-        Request req = this.apiHandler.item().get(this.wid);
+        HashMap<String, Object> map = new HashMap<>();
 
-        //TODO Add +1 to quantity
+        ITEM_ID_QUANTITY++;
 
-        /*try {
+        map.put("quantity", ITEM_ID_QUANTITY);
+
+        try {
+            Request req = this.apiHandler.item().patch(this.wid, ITEM_ID, map);
+
+            this.handleRequest(req);
 
         } catch (JSONException e) {
 
-            Log.e("CREATE_ITEM", "JsonException");
-        }*/
+            Log.e("EDIT_ITEM", "JSON Exception: " + e.getMessage());
+        }
+
+        //TODO Add +1 to quantity
+
+    }
+
+    private void handleRequest(Request req) {
+
+        this.client.newCall(req).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(BarcodeActivity.this, "API connection error.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) {
+
+                switch (response.code()) {
+
+                    // Success on the request
+                    case 200:
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(BarcodeActivity.this, "1 Unit Added", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                        break;
+
+                    // Success on the request
+                    case 201:
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(BarcodeActivity.this, "1 Unit Added", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                        break;
+
+                    // Unauthorized
+                    case 401:
+                        // TODO: Refresh user token
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(BarcodeActivity.this, "Unauthorized", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        Log.e("WAREHOUSE_CRUD", "Unauthorized");
+                        break;
+
+                    // Bad Request
+                    case 400:
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(BarcodeActivity.this, "Bad Request", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        Log.e("WAREHOUSE_CRUD", "Bad Request");
+                        break;
+
+                    // Internal Server Error
+                    case 500:
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(BarcodeActivity.this, "Internal Server Error", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                        break;
+
+                    default:
+                        Log.e("WAREHOUSE_CRUD", "Unhandled HTTP status code: " + response.code());
+                }
+            }
+        });
     }
 
 }
