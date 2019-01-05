@@ -27,7 +27,6 @@
         android:text="Name"
         android:textSize="25dip"
         android:textStyle="bold"
-
         android:typeface="sans" />
     <!-- Weather Information-->
     <TextView

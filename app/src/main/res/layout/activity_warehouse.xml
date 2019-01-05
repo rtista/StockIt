@@ -82,7 +82,8 @@
             android:layout_marginBottom="8dp"
             android:hint="Description" />
 
-        <!-- Minimum Quantity Label -->
+        <!--TO REMOVE AND REPLACE WITH FRAGMENT-->
+        <!-- Lat Label -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -95,7 +96,7 @@
             android:layout_marginBottom="8dp"
             android:hint="Latitude"/>
 
-        <!-- Minimum Quantity Label -->
+        <!-- Long Label -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -107,6 +108,18 @@
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:hint="Longitude"/>
+
+        <!--Map fragment-->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Location" />
+        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/map"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".MapsActivity" />
 
         <!-- Action Button -->
         <android.support.v7.widget.AppCompatButton

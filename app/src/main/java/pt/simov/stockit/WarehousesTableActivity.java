@@ -275,6 +275,7 @@ public class WarehousesTableActivity extends AppCompatActivity implements Adapte
     public void updateDisplay() {
 
         // Update the list view
+        this.wAdapter = new WarehouseListAdapter(this.feed);
         this.lv.setAdapter(this.wAdapter);
         this.lv.setOnItemClickListener(this);
         lv.setSelection(0);

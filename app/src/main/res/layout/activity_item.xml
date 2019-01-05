@@ -106,6 +106,19 @@
             android:layout_marginBottom="8dp"
             android:hint="Minimum Quantity"/>
 
+        <!-- Image Label -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Minimum Quantity" />
+        <ImageView android:id="@+id/item_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:hint="Minimum Quantity"/>
+
         <!-- Action Button -->
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/btn_action"

@@ -287,6 +287,7 @@ public class InventoryActivity extends AppCompatActivity {
     public void updateDisplay() {
 
         // Update the list view
+        this.wAdapter = new InventoryListAdapter(this.feed);
         this.lv.setAdapter(this.wAdapter);
         lv.setSelection(0);
     }
