@@ -1,5 +1,6 @@
 package pt.simov.stockit;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -7,6 +8,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import org.json.JSONException;
 
@@ -95,6 +99,8 @@ public class InventoryCrudActivity extends AppCompatActivity implements View.OnC
         int quant, min_quant;
 
         Button btn = findViewById(R.id.item_crud_action);
+        Button btnBarcode = findViewById(R.id.item_crud_barcode_button);
+        buttonBarcodeListener(btnBarcode);
 
         switch (this.requestCode) {
 
@@ -128,6 +134,7 @@ public class InventoryCrudActivity extends AppCompatActivity implements View.OnC
                 this.section_et.setText(section);
                 this.min_quant_et.setText(String.valueOf(min_quant));
 
+                btnBarcode.setVisibility(View.INVISIBLE);
                 btn.setText("Back");
                 break;
 
@@ -177,8 +184,9 @@ public class InventoryCrudActivity extends AppCompatActivity implements View.OnC
 
                 //Get Info
                 barcode = this.getIntent().getStringExtra("BARCODE");
-                if (!barcode.isEmpty()) {
+                if (barcode != null && !barcode.isEmpty()) {
                     this.barcode_et.setText(barcode);
+                    this.barcode_et.setEnabled(false);
                 }
 
                 // Set default text field content
@@ -191,7 +199,6 @@ public class InventoryCrudActivity extends AppCompatActivity implements View.OnC
                 btn.setText("Create");
                 break;
         }
-
         // Set on click button listener
         btn.setOnClickListener(this);
     }
@@ -232,6 +239,15 @@ public class InventoryCrudActivity extends AppCompatActivity implements View.OnC
                 editItem(id, name, desc, quant, barcode, section, min_quant);
                 break;
         }
+    }
+
+    public void buttonBarcodeListener(Button btn){
+        btn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View arg0) {
+                new IntentIntegrator(InventoryCrudActivity.this).initiateScan();
+            }
+        });
+
     }
 
     /**
@@ -391,5 +407,18 @@ public class InventoryCrudActivity extends AppCompatActivity implements View.OnC
         });
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if(result != null) {
+            if(result.getContents() == null) {
+                Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
+            } else {
+                this.barcode_et.setText(result.getContents());
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
 
 }
