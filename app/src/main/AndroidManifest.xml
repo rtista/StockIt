@@ -26,6 +26,12 @@
         <activity android:name=".WarehouseActivity" />
         <activity android:name=".InventoryCrudActivity" />
         <activity android:name=".BarcodeActivity"></activity>
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyDwQBrSOYWAOchGN8WuYN2PSe_2IMTRD94" />
     </application>
 
 </manifest>

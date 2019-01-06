@@ -3,12 +3,22 @@ package pt.simov.stockit;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONException;
 
@@ -79,6 +89,11 @@ public class WarehouseActivity extends AppCompatActivity implements View.OnClick
     private OkHttpClient client = HttpClient.getInstance();
 
     /**
+     * the google maps for the fragment
+     */
+    private GoogleMap mMap;
+
+    /**
      * On activity creation.
      * @param savedInstanceState
      */
@@ -102,9 +117,17 @@ public class WarehouseActivity extends AppCompatActivity implements View.OnClick
         btn = findViewById(R.id.btn_action);
         tv = findViewById(R.id.warehouse_title);
 
+        SupportMapFragment mapFragment = (SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.warehouse_map);
+        ViewGroup.LayoutParams params = mapFragment.getView().getLayoutParams();
+        params.height = 900;
+        mapFragment.getView().setLayoutParams(params);
+        mapFragment.getMapAsync(mapReadyCallback);
+
+
         // Set activity based on request code
         setActivity();
-    }
+
+}
 
     /**
      * Sets the activity components for the purpose it's being launched for.
@@ -155,6 +178,8 @@ public class WarehouseActivity extends AppCompatActivity implements View.OnClick
                 lon_et.setText(lon);
 
                 btn.setText("Save");
+
+                setEditTextListenetrs();
                 break;
 
             // Create
@@ -176,11 +201,65 @@ public class WarehouseActivity extends AppCompatActivity implements View.OnClick
                 lon_et.setText("");*/
 
                 btn.setText("Create");
+                setEditTextListenetrs();
                 break;
         }
 
         // Set on click button listener
         btn.setOnClickListener(this);
+    }
+
+    /**
+     * Sets listeners for lat and lon, to change marker on map
+     */
+    private void setEditTextListenetrs(){
+        lat_et.addTextChangedListener(new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+                try{
+                    mMap.clear();
+                    LatLng warehouse =new LatLng(Double.parseDouble(lat), Double.parseDouble(lon));
+                    mMap.addMarker(new MarkerOptions().position(warehouse).title("Warehouse " + name));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(warehouse));
+                    // Zoom in, animating the camera.
+                    mMap.animateCamera(CameraUpdateFactory.zoomIn());
+                    // Zoom out to zoom level 10, animating with a duration of 2 seconds.
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(14), 2000, null);
+                }catch (NumberFormatException e) {
+                    Toast.makeText(getApplicationContext(), "Waiting for acceptable coordinates", Toast.LENGTH_SHORT).show();
+                }catch (NullPointerException e){
+
+                }
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        });
+
+        lon_et.addTextChangedListener(new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+                try{
+                    mMap.clear();
+                    LatLng warehouse =new LatLng(Double.parseDouble(lat), Double.parseDouble(lon));
+                    mMap.addMarker(new MarkerOptions().position(warehouse).title("Warehouse " + name));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(warehouse));
+                    // Zoom in, animating the camera.
+                    mMap.animateCamera(CameraUpdateFactory.zoomIn());
+                    // Zoom out to zoom level 10, animating with a duration of 2 seconds.
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(14), 2000, null);
+                }catch (NumberFormatException e) {
+                    Toast.makeText(getApplicationContext(), "Waiting for acceptable coordinates", Toast.LENGTH_SHORT).show();
+                }catch (NullPointerException e){
+
+                }
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        });
     }
 
     /**
@@ -218,6 +297,69 @@ public class WarehouseActivity extends AppCompatActivity implements View.OnClick
                 break;
         }
     }
+
+    OnMapReadyCallback mapReadyCallback = new OnMapReadyCallback() {
+        @Override
+        public void onMapReady(GoogleMap googleMap) {
+            LatLng warehouse;
+            mMap = googleMap;
+            switch(requestCode){
+                case REQUEST_CODE_VIEW:
+                    warehouse =new LatLng(Double.parseDouble(lat), Double.parseDouble(lon));
+                    //mMap.getUiSettings().setZoomGesturesEnabled(true);
+                    mMap.getUiSettings().setZoomControlsEnabled(true);
+                    //mMap.getUiSettings().setMyLocationButtonEnabled(true);
+                    //mMap.getUiSettings().setCompassEnabled(true);
+                    mMap.getUiSettings().setAllGesturesEnabled(false);
+                    //mMap.getUiSettings().setRotateGesturesEnabled(true);
+                    mMap.addMarker(new MarkerOptions().position(warehouse).title("Warehouse " + name));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(warehouse));
+                    // Zoom in, animating the camera.
+                    mMap.animateCamera(CameraUpdateFactory.zoomIn());
+                    // Zoom out to zoom level 10, animating with a duration of 2 seconds.
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(14), 2000, null);
+                    break;
+
+                // Add Warehouse
+                case REQUEST_CODE_ADD:
+                    //mMap.getUiSettings().setZoomGesturesEnabled(true);
+                    mMap.getUiSettings().setZoomControlsEnabled(true);
+                    //mMap.getUiSettings().setMyLocationButtonEnabled(true);
+                    //mMap.getUiSettings().setCompassEnabled(true);
+                    //mMap.getUiSettings().setAllGesturesEnabled(false);
+                    //mMap.getUiSettings().setRotateGesturesEnabled(true);
+                    mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                        @Override
+                        public void onMapClick(LatLng point) {
+                            mMap.clear();
+                            mMap.addMarker(new MarkerOptions().position(point));
+                            lat = String.valueOf(point.latitude);
+                            lon = String.valueOf(point.longitude);
+                            lon_et.setText(lon);
+                            lat_et.setText(lat);
+                        }
+                    });
+                    break;
+
+                // Edit Warehouse
+                case REQUEST_CODE_EDIT:
+                    mMap.getUiSettings().setZoomControlsEnabled(true);
+                    mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                        @Override
+                        public void onMapClick(LatLng point) {
+                            mMap.clear();
+                            mMap.addMarker(new MarkerOptions().position(point));
+                            lat = String.valueOf(point.latitude);
+                            lon = String.valueOf(point.longitude);
+                            lon_et.setText(lon);
+                            lat_et.setText(lat);
+                        }
+                    });
+                    break;
+            }
+            mMap.setBuildingsEnabled(true);
+        }
+    };
 
     /**
      * Creates a warehouse.
