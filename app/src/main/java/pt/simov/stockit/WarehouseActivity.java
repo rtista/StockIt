@@ -353,6 +353,7 @@ public class WarehouseActivity extends AppCompatActivity implements View.OnClick
                             lon = String.valueOf(point.longitude);
                             lon_et.setText(lon);
                             lat_et.setText(lat);
+
                         }
                     });
                     break;
