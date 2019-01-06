@@ -218,6 +218,7 @@ public class WarehouseActivity extends AppCompatActivity implements View.OnClick
             public void afterTextChanged(Editable s) {
                 try{
                     mMap.clear();
+                    lat = lat_et.getText().toString();
                     LatLng warehouse =new LatLng(Double.parseDouble(lat), Double.parseDouble(lon));
                     mMap.addMarker(new MarkerOptions().position(warehouse).title("Warehouse " + name));
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(warehouse));
@@ -242,6 +243,7 @@ public class WarehouseActivity extends AppCompatActivity implements View.OnClick
             public void afterTextChanged(Editable s) {
                 try{
                     mMap.clear();
+                    lon = lon_et.getText().toString();
                     LatLng warehouse =new LatLng(Double.parseDouble(lat), Double.parseDouble(lon));
                     mMap.addMarker(new MarkerOptions().position(warehouse).title("Warehouse " + name));
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(warehouse));
@@ -328,6 +330,7 @@ public class WarehouseActivity extends AppCompatActivity implements View.OnClick
                     //mMap.getUiSettings().setCompassEnabled(true);
                     //mMap.getUiSettings().setAllGesturesEnabled(false);
                     //mMap.getUiSettings().setRotateGesturesEnabled(true);
+
                     mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                         @Override
                         public void onMapClick(LatLng point) {
@@ -335,8 +338,8 @@ public class WarehouseActivity extends AppCompatActivity implements View.OnClick
                             mMap.addMarker(new MarkerOptions().position(point));
                             lat = String.valueOf(point.latitude);
                             lon = String.valueOf(point.longitude);
-                            lon_et.setText(lon);
                             lat_et.setText(lat);
+                            lon_et.setText(lon);
                         }
                     });
                     break;
@@ -344,6 +347,13 @@ public class WarehouseActivity extends AppCompatActivity implements View.OnClick
                 // Edit Warehouse
                 case REQUEST_CODE_EDIT:
                     mMap.getUiSettings().setZoomControlsEnabled(true);
+                    warehouse =new LatLng(Double.parseDouble(lat), Double.parseDouble(lon));
+                    mMap.addMarker(new MarkerOptions().position(warehouse));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(warehouse));
+                    // Zoom in, animating the camera.
+                    mMap.animateCamera(CameraUpdateFactory.zoomIn());
+                    // Zoom out to zoom level 10, animating with a duration of 2 seconds.
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(14), 2000, null);
                     mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                         @Override
                         public void onMapClick(LatLng point) {
@@ -351,9 +361,8 @@ public class WarehouseActivity extends AppCompatActivity implements View.OnClick
                             mMap.addMarker(new MarkerOptions().position(point));
                             lat = String.valueOf(point.latitude);
                             lon = String.valueOf(point.longitude);
-                            lon_et.setText(lon);
                             lat_et.setText(lat);
-
+                            lon_et.setText(lon);
                         }
                     });
                     break;
