@@ -21,10 +21,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".SignupActivity" />
-        <activity android:name=".InventoryActivity" />
-        <activity android:name=".WarehousesTableActivity" />
-        <activity android:name=".WarehouseActivity" />
-        <activity android:name=".InventoryCrudActivity" />
+        <activity android:name=".ItemListActivity" />
+        <activity android:name=".WarehouseListActivity" />
+        <activity android:name=".WarehouseCrudActivity" />
+        <activity android:name=".ItemCrudActivity" />
         <activity android:name=".BarcodeActivity"></activity>
         <meta-data
             android:name="com.google.android.gms.version"
