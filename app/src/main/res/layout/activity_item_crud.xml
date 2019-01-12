@@ -87,21 +87,6 @@
             android:layout_marginBottom="8dp"
             android:hint="Quantity" />
 
-        <!-- Section Label -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Section" />
-
-        <EditText
-            android:id="@+id/item_crud_section"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="text"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:hint="Section" />
-
         <!-- Barcode Label -->
         <TextView
             android:layout_width="match_parent"

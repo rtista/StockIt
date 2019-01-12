@@ -68,8 +68,6 @@ public class BarcodeActivity extends AppCompatActivity implements BarcodeCallbac
     private DecoratedBarcodeView barcodeView;
     private BeepManager beepManager;
     private TextView lastValue;
-    private TextView labelLastValue;
-    private ImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,8 +87,7 @@ public class BarcodeActivity extends AppCompatActivity implements BarcodeCallbac
                 setTitle(R.string.title_activity_barcode_Write);
         }
 
-        labelLastValue = findViewById(R.id.labelLastValue);
-        lastValue = findViewById(R.id.lastValue);
+        // lastValue = findViewById(R.id.lastValue);
 
         barcodeView = findViewById(R.id.barcode_scanner);
         Collection<BarcodeFormat> formats = Arrays.asList(BarcodeFormat.CODE_39);
@@ -99,8 +96,6 @@ public class BarcodeActivity extends AppCompatActivity implements BarcodeCallbac
         barcodeView.decodeContinuous(this);
 
         beepManager = new BeepManager(this);
-
-        imageView = findViewById(R.id.barcodePreview);
     }
 
     /**
@@ -195,7 +190,6 @@ public class BarcodeActivity extends AppCompatActivity implements BarcodeCallbac
                                     it.getString("name"),
                                     it.getString("description"),
                                     it.getInt("quantity"),
-                                    it.getString("section"),
                                     it.getString("barcode"),
                                     it.getInt("min_quantity")
                             );
@@ -215,7 +209,6 @@ public class BarcodeActivity extends AppCompatActivity implements BarcodeCallbac
                                     iViewItem.putExtra("DESCRIPTION", item.getDescription());
                                     iViewItem.putExtra("QUANTITY", item.getQuantity());
                                     iViewItem.putExtra("BARCODE", item.getBarcode());
-                                    iViewItem.putExtra("SECTION", item.getSection());
                                     iViewItem.putExtra("MIN_QUANTITY", item.getMin_quantity());
 
                                     iViewItem.putExtra("REQUEST_CODE", ItemCrudActivity.REQUEST_CODE_VIEW);

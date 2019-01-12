@@ -66,7 +66,7 @@ public class WarehouseListActivity extends AppCompatActivity implements AdapterV
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_warehouses);
+        setContentView(R.layout.activity_warehouse_list);
         setTitle(R.string.title_warehouses);
 
 

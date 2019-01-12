@@ -73,7 +73,7 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_inventory_crud);
+        setContentView(R.layout.activity_item_crud);
 
         this.requestCode = this.getIntent().getIntExtra("REQUEST_CODE", 0);
         this.wid = this.getIntent().getIntExtra("WAREHOUSE_ID", 0);
@@ -231,7 +231,7 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
 
             // Add Warehouse
             case REQUEST_CODE_ADD:
-                addItem(name, desc, quant, barcode, section, min_quant);
+                addItem(name, desc, quant, barcode, min_quant);
                 break;
 
             // Edit Warehouse
@@ -258,16 +258,15 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
      * @param description  The item description.
      * @param quantity     The item quantity.
      * @param barcode      The item barcode.
-     * @param section      The item warehouse section.
      * @param min_quantity The item alert quantity.
      */
     private void addItem(String name, String description, int quantity, String barcode,
-                         String section, int min_quantity) {
+                         int min_quantity) {
 
         // Create request
         try {
             Request req = this.apiHandler.item().post(this.wid, name, description,
-                    quantity, section, barcode, min_quantity);
+                    quantity, barcode, min_quantity);
 
             this.handleRequest(req);
 
