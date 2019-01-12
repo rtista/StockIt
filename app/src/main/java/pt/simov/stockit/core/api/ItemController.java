@@ -1,5 +1,7 @@
 package pt.simov.stockit.core.api;
 
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -47,6 +49,30 @@ public class ItemController {
         Request request = new Request.Builder()
                 .addHeader("Authorization", this.authorization)
                 .url(ApiHandler.getInstance().getBaseUrl() + this.url.replace("{wid}", String.valueOf(wid)))
+                .get()
+                .build();
+
+        return request;
+    }
+
+    /**
+     * Returns all the user's warehouse id item.
+     *
+     * @param wid The warehouse id.
+     * @param barcode The item's barcode.
+     * @return Request The request object to be queued on the request queue.
+     */
+    public Request get(int wid, String barcode) {
+
+        String url = new StringBuilder()
+                .append(ApiHandler.getInstance().getBaseUrl())
+                .append(this.url.replace("{wid}", String.valueOf(wid)))
+                .append("?barcode=").append(barcode).toString();
+
+        // Create request
+        Request request = new Request.Builder()
+                .addHeader("Authorization", this.authorization)
+                .url(url)
                 .get()
                 .build();
 
