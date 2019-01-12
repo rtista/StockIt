@@ -33,7 +33,7 @@ import okhttp3.Response;
 import pt.simov.stockit.core.ApiHandler;
 import pt.simov.stockit.core.http.HttpClient;
 
-public class WarehouseActivity extends AppCompatActivity implements View.OnClickListener {
+public class WarehouseCrudActivity extends AppCompatActivity implements View.OnClickListener {
 
     /**
      * Activity Result Codes
@@ -472,7 +472,7 @@ public class WarehouseActivity extends AppCompatActivity implements View.OnClick
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(WarehouseActivity.this, "Sad life :(", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(WarehouseCrudActivity.this, "Sad life :(", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -485,7 +485,7 @@ public class WarehouseActivity extends AppCompatActivity implements View.OnClick
                     // Success on the request
                     case 200:
 
-                        setResult(RESULT_CODE_SUCCESS, WarehouseActivity.this.getIntent());
+                        setResult(RESULT_CODE_SUCCESS, WarehouseCrudActivity.this.getIntent());
 
                         // Finish activity
                         finish();
@@ -495,7 +495,7 @@ public class WarehouseActivity extends AppCompatActivity implements View.OnClick
                     // Success on the request
                     case 201:
 
-                        setResult(RESULT_CODE_SUCCESS, WarehouseActivity.this.getIntent());
+                        setResult(RESULT_CODE_SUCCESS, WarehouseCrudActivity.this.getIntent());
 
                         // Finish activity
                         finish();
@@ -508,7 +508,7 @@ public class WarehouseActivity extends AppCompatActivity implements View.OnClick
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(WarehouseActivity.this, "Unauthorized", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(WarehouseCrudActivity.this, "Unauthorized", Toast.LENGTH_SHORT).show();
                             }
                         });
                         Log.e("WAREHOUSE_CRUD", "Unauthorized");
@@ -519,7 +519,7 @@ public class WarehouseActivity extends AppCompatActivity implements View.OnClick
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(WarehouseActivity.this, "Bad Request", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(WarehouseCrudActivity.this, "Bad Request", Toast.LENGTH_SHORT).show();
                             }
                         });
                         Log.e("WAREHOUSE_CRUD", "Bad Request");
@@ -528,7 +528,7 @@ public class WarehouseActivity extends AppCompatActivity implements View.OnClick
                     // Internal Server Error
                     case 500:
 
-                        setResult(RESULT_CODE_FAILURE, WarehouseActivity.this.getIntent());
+                        setResult(RESULT_CODE_FAILURE, WarehouseCrudActivity.this.getIntent());
 
                         break;
 

@@ -49,7 +49,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             try {
 
-                Intent i = new Intent(LoginActivity.this, WarehousesTableActivity.class);
+                Intent i = new Intent(LoginActivity.this, WarehouseListActivity.class);
                 startActivity(i);
                 finish();
 
@@ -132,7 +132,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                             try {
 
-                                Intent i = new Intent(LoginActivity.this, WarehousesTableActivity.class);
+                                Intent i = new Intent(LoginActivity.this, WarehouseListActivity.class);
                                 startActivity(i);
                                 finish();
 

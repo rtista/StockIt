@@ -9,12 +9,12 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import pt.simov.stockit.core.domain.Inventory;
+import pt.simov.stockit.core.domain.Item;
 
-public class InventoryListAdapter extends BaseAdapter {
-    private final List<Inventory> items;
+public class ItemListAdapter extends BaseAdapter {
+    private final List<Item> items;
 
-    public InventoryListAdapter(final List<Inventory> items) {
+    public ItemListAdapter(final List<Item> items) {
         this.items = items;
     }
 
@@ -32,7 +32,7 @@ public class InventoryListAdapter extends BaseAdapter {
 
     public View getView(int arg0, View arg1, ViewGroup arg2) {
         View itemView = null;
-        final Inventory row = this.items.get(arg0);
+        final Item row = this.items.get(arg0);
         if (arg1 == null) {
             LayoutInflater inflater = (LayoutInflater) arg2.getContext()
                     .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
