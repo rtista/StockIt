@@ -71,7 +71,7 @@ public class ItemListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_inventory);
+        setContentView(R.layout.activity_item_list);
         setTitle(R.string.title_inventory);
 
         // Text View
@@ -202,7 +202,6 @@ public class ItemListActivity extends AppCompatActivity {
                 i.putExtra("DESCRIPTION", feed.get(pos).getDescription());
                 i.putExtra("QUANTITY", feed.get(pos).getQuantity());
                 i.putExtra("BARCODE", feed.get(pos).getBarcode());
-                i.putExtra("SECTION", feed.get(pos).getSection());
                 i.putExtra("MIN_QUANTITY", feed.get(pos).getMin_quantity());
 
                 i.putExtra("REQUEST_CODE", ItemCrudActivity.REQUEST_CODE_VIEW);
@@ -220,7 +219,6 @@ public class ItemListActivity extends AppCompatActivity {
                 i.putExtra("DESCRIPTION", feed.get(pos).getDescription());
                 i.putExtra("QUANTITY", feed.get(pos).getQuantity());
                 i.putExtra("BARCODE", feed.get(pos).getBarcode());
-                i.putExtra("SECTION", feed.get(pos).getSection());
                 i.putExtra("MIN_QUANTITY", feed.get(pos).getMin_quantity());
 
                 i.putExtra("REQUEST_CODE", ItemCrudActivity.REQUEST_CODE_EDIT);
@@ -350,7 +348,6 @@ public class ItemListActivity extends AppCompatActivity {
                                                 it.getString("name"),
                                                 it.getString("description"),
                                                 it.getInt("quantity"),
-                                                it.getString("section"),
                                                 it.getString("barcode"),
                                                 it.getInt("min_quantity")
                                         )

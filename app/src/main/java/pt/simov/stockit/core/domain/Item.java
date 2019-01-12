@@ -23,11 +23,6 @@ public class Item {
     private int quantity;
 
     /**
-     * The item warehouse section.
-     */
-    private String section;
-
-    /**
      * The item barcode value.
      */
     private String barcode;
@@ -45,15 +40,13 @@ public class Item {
      * @param description  The item description.
      * @param quantity     The item quantity.
      * @param barcode      The item barcode.
-     * @param section      The item section.
      * @param min_quantity The item alert/minimum quantity.
      */
-    public Item(int id, String name, String description, int quantity, String section, String barcode, int min_quantity) {
+    public Item(int id, String name, String description, int quantity, String barcode, int min_quantity) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.quantity = quantity;
-        this.section = section;
         this.barcode = barcode;
         this.min_quantity = min_quantity;
     }
@@ -88,14 +81,6 @@ public class Item {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
-    }
-
-    public String getSection() {
-        return this.section == null ? "" : this.section;
-    }
-
-    public void setSection(String section) {
-        this.section = section;
     }
 
     public String getBarcode() {

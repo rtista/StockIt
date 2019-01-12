@@ -100,7 +100,7 @@ public class WarehouseCrudActivity extends AppCompatActivity implements View.OnC
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_warehouse);
+        setContentView(R.layout.activity_warehouse_crud);
 
         in = getIntent();
 

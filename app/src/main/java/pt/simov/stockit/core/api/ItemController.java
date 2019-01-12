@@ -1,7 +1,5 @@
 package pt.simov.stockit.core.api;
 
-import android.util.Log;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -86,23 +84,17 @@ public class ItemController {
      * @param name         The item name.
      * @param description  The item description.
      * @param quantity     The item quantity.
-     * @param section      The item warehouse section.
      * @param barcode      The barcode of the item.
      * @param min_quantity The item alert quantity.
      * @return Request The request object to be queued on the request queue.
      * @throws JSONException
      */
     public Request post(int wid, String name, String description, int quantity,
-                        String section, String barcode, int min_quantity) throws JSONException {
+                        String barcode, int min_quantity) throws JSONException {
 
         // Default quantity is 1
         if (quantity == 0) {
             quantity = 1;
-        }
-
-        // Allow empty section
-        if (section == null) {
-            section = "";
         }
 
         // Allow empty barcode
@@ -116,7 +108,6 @@ public class ItemController {
         json.put("name", name);
         json.put("description", description);
         json.put("quantity", quantity);
-        json.put("section", section);
         json.put("barcode", barcode);
         json.put("min_quantity", min_quantity);
 
