@@ -63,7 +63,7 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
     /**
      * Text fields.
      */
-    private EditText name_et, desc_et, quant_et, barcode_et, section_et, min_quant_et;
+    private EditText name_et, desc_et, quant_et, barcode_et, min_quant_et;
 
     /**
      * On activity creation.
@@ -82,7 +82,6 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
         this.desc_et = findViewById(R.id.item_crud_description);
         this.quant_et = findViewById(R.id.item_crud_et_quantity);
         this.barcode_et = findViewById(R.id.item_crud_barcode);
-        this.section_et = findViewById(R.id.item_crud_section);
         this.min_quant_et = findViewById(R.id.item_crud_alert);
 
         // Set activity based on request code
@@ -95,7 +94,7 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
     private void setActivity() {
 
         // Initialize Info
-        String name, desc, barcode, section;
+        String name, desc, barcode;
         int quant, min_quant;
 
         Button btn = findViewById(R.id.item_crud_action);
@@ -112,7 +111,6 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
                 this.desc_et.setEnabled(false);
                 this.quant_et.setEnabled(false);
                 this.barcode_et.setEnabled(false);
-                this.section_et.setEnabled(false);
                 this.min_quant_et.setEnabled(false);
 
                 // Set Activity Title
@@ -123,7 +121,6 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
                 desc = this.getIntent().getStringExtra("DESCRIPTION");
                 quant = this.getIntent().getIntExtra("QUANTITY", 0);
                 barcode = this.getIntent().getStringExtra("BARCODE");
-                section = this.getIntent().getStringExtra("SECTION");
                 min_quant = this.getIntent().getIntExtra("MIN_QUANTITY", 0);
 
                 // Set Text fields content
@@ -131,7 +128,6 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
                 this.desc_et.setText(desc);
                 this.quant_et.setText(String.valueOf(quant));
                 this.barcode_et.setText(barcode);
-                this.section_et.setText(section);
                 this.min_quant_et.setText(String.valueOf(min_quant));
 
                 btnBarcode.setVisibility(View.INVISIBLE);
@@ -146,7 +142,6 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
                 this.desc_et.setEnabled(true);
                 this.quant_et.setEnabled(true);
                 this.barcode_et.setEnabled(true);
-                this.section_et.setEnabled(true);
                 this.min_quant_et.setEnabled(true);
 
                 // Set Activity Title
@@ -157,7 +152,6 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
                 desc = this.getIntent().getStringExtra("DESCRIPTION");
                 quant = this.getIntent().getIntExtra("QUANTITY", 0);
                 barcode = this.getIntent().getStringExtra("BARCODE");
-                section = this.getIntent().getStringExtra("SECTION");
                 min_quant = this.getIntent().getIntExtra("MIN_QUANTITY", 0);
 
                 // Set Text fields content
@@ -165,7 +159,6 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
                 this.desc_et.setText(desc);
                 this.quant_et.setText(String.valueOf(quant));
                 this.barcode_et.setText(barcode);
-                this.section_et.setText(section);
                 this.min_quant_et.setText(String.valueOf(min_quant));
 
                 btn.setText("Save");
@@ -179,7 +172,6 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
                 this.desc_et.setEnabled(true);
                 this.quant_et.setEnabled(true);
                 this.barcode_et.setEnabled(true);
-                this.section_et.setEnabled(true);
                 this.min_quant_et.setEnabled(true);
 
                 //Get Info
@@ -217,7 +209,6 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
         String desc = this.desc_et.getText().toString();
         int quant = Integer.parseInt(this.quant_et.getText().toString());
         String barcode = this.barcode_et.getText().toString();
-        String section = this.section_et.getText().toString();
         int min_quant = Integer.parseInt(this.min_quant_et.getText().toString());
 
         switch (this.requestCode) {
@@ -237,7 +228,7 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
             // Edit Warehouse
             case REQUEST_CODE_EDIT:
                 int id = this.getIntent().getIntExtra("ITEM_ID", -1);
-                editItem(id, name, desc, quant, barcode, section, min_quant);
+                editItem(id, name, desc, quant, barcode, min_quant);
                 break;
         }
     }
@@ -284,7 +275,7 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
      * @param description The warehouse description.
      */
     private void editItem(int id, String name, String description, int quantity,
-                          String barcode, String section, int min_quantity) {
+                          String barcode, int min_quantity) {
 
         HashMap<String, Object> map = new HashMap<>();
 
@@ -301,11 +292,6 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
         if (barcode != null) {
 
             map.put("barcode", barcode);
-        }
-
-        if (section != null) {
-
-            map.put("section", section);
         }
 
         map.put("quantity", quantity);
