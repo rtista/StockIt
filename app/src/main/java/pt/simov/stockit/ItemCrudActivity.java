@@ -25,7 +25,7 @@ import okhttp3.Response;
 import pt.simov.stockit.core.ApiHandler;
 import pt.simov.stockit.core.http.HttpClient;
 
-public class InventoryCrudActivity extends AppCompatActivity implements View.OnClickListener {
+public class ItemCrudActivity extends AppCompatActivity implements View.OnClickListener {
 
     /**
      * Activity Result Codes
@@ -245,7 +245,7 @@ public class InventoryCrudActivity extends AppCompatActivity implements View.OnC
     public void buttonBarcodeListener(Button btn){
         btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
-                new IntentIntegrator(InventoryCrudActivity.this).initiateScan();
+                new IntentIntegrator(ItemCrudActivity.this).initiateScan();
             }
         });
 
@@ -341,7 +341,7 @@ public class InventoryCrudActivity extends AppCompatActivity implements View.OnC
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(InventoryCrudActivity.this, "Sad life :(", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ItemCrudActivity.this, "Sad life :(", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -354,7 +354,7 @@ public class InventoryCrudActivity extends AppCompatActivity implements View.OnC
                     // Success on the request
                     case 200:
 
-                        setResult(RESULT_CODE_SUCCESS, InventoryCrudActivity.this.getIntent());
+                        setResult(RESULT_CODE_SUCCESS, ItemCrudActivity.this.getIntent());
 
                         // Finish activity
                         finish();
@@ -364,7 +364,7 @@ public class InventoryCrudActivity extends AppCompatActivity implements View.OnC
                     // Success on the request
                     case 201:
 
-                        setResult(RESULT_CODE_SUCCESS, InventoryCrudActivity.this.getIntent());
+                        setResult(RESULT_CODE_SUCCESS, ItemCrudActivity.this.getIntent());
 
                         // Finish activity
                         finish();
@@ -377,7 +377,7 @@ public class InventoryCrudActivity extends AppCompatActivity implements View.OnC
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(InventoryCrudActivity.this, "Unauthorized", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ItemCrudActivity.this, "Unauthorized", Toast.LENGTH_SHORT).show();
                             }
                         });
                         Log.e("ITEM_CRUD", "Unauthorized");
@@ -388,7 +388,7 @@ public class InventoryCrudActivity extends AppCompatActivity implements View.OnC
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(InventoryCrudActivity.this, "Bad Request", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ItemCrudActivity.this, "Bad Request", Toast.LENGTH_SHORT).show();
                             }
                         });
                         Log.e("ITEM_CRUD", "Bad Request");
@@ -397,7 +397,7 @@ public class InventoryCrudActivity extends AppCompatActivity implements View.OnC
                     // Internal Server Error
                     case 500:
 
-                        setResult(RESULT_CODE_FAILURE, InventoryCrudActivity.this.getIntent());
+                        setResult(RESULT_CODE_FAILURE, ItemCrudActivity.this.getIntent());
                         break;
 
                     default:
