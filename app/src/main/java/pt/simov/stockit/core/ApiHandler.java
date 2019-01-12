@@ -16,8 +16,7 @@ public class ApiHandler {
      * The API URL location.
      * Todo: Make this config changeable
      */
-    // private final String url = "http://172.18.158.14:8000/api";
-    private final String url = "http://192.168.1.72:8000/api";
+    private final String url = "http://192.168.1.4:8000/api";
 
     /**
      * The handler's item controller.
@@ -28,16 +27,6 @@ public class ApiHandler {
      * The handler's item controller.
      */
     private UserController userController;
-
-    /**
-     * The handler's item controller.
-     */
-    private WarehouseController warehouseController;
-
-    /**
-     * The handler's item controller.
-     */
-    private ItemController itemController;
 
     /**
      * Returns the singleton instance.
@@ -78,7 +67,7 @@ public class ApiHandler {
      */
     public AuthController auth() {
 
-        return this.authController;
+        return instance.authController;
     }
 
     /**
@@ -88,7 +77,7 @@ public class ApiHandler {
      */
     public UserController user() {
 
-        return this.userController;
+        return instance.userController;
     }
 
     /**
@@ -98,7 +87,7 @@ public class ApiHandler {
      */
     public WarehouseController warehouse() {
 
-        return new WarehouseController(this.authController.getAuthorization());
+        return new WarehouseController(instance.auth().getAuthorization());
     }
 
     /**
@@ -108,6 +97,6 @@ public class ApiHandler {
      */
     public ItemController item() {
 
-        return new ItemController(this.authController.getAuthorization());
+        return new ItemController(instance.auth().getAuthorization());
     }
 }
