@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -61,9 +63,15 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
     private OkHttpClient client = HttpClient.getInstance();
 
     /**
-     * Text fields.
+     * Input fields.
      */
-    private EditText name_et, desc_et, quant_et, barcode_et, min_quant_et;
+    private EditText name_et, desc_et, barcode_et;
+    private NumberPicker availablep, allocatedp, alertp;
+
+    /**
+     * Visisbility Toggled Layouts
+     */
+    private LinearLayout pickers, ets;
 
     /**
      * On activity creation.
@@ -72,17 +80,32 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        Log.e("ITEM_CRUD", "Wtf");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_crud);
+
+        Log.e("ITEM_CRUD", "Wtf");
 
         this.requestCode = this.getIntent().getIntExtra("REQUEST_CODE", 0);
         this.wid = this.getIntent().getIntExtra("WAREHOUSE_ID", 0);
 
+        // Edit Texts
         this.name_et = findViewById(R.id.item_crud_et_name);
         this.desc_et = findViewById(R.id.item_crud_description);
-        this.quant_et = findViewById(R.id.item_crud_et_quantity);
         this.barcode_et = findViewById(R.id.item_crud_barcode);
-        this.min_quant_et = findViewById(R.id.item_crud_alert);
+
+        // Number Pickers
+        this.availablep = findViewById(R.id.item_crud_available_picker);
+        this.allocatedp = findViewById(R.id.item_crud_allocated_picker);
+        this.alertp = findViewById(R.id.item_crud_alert_picker);
+        this.availablep.setWrapSelectorWheel(false);
+        this.allocatedp.setWrapSelectorWheel(false);
+        this.alertp.setWrapSelectorWheel(false);
+
+        // Layouts
+        this.pickers = findViewById(R.id.item_crud_pickers);
+        this.ets = findViewById(R.id.item_crud_ets);
 
         // Set activity based on request code
         setActivity();
@@ -95,8 +118,9 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
 
         // Initialize Info
         String name, desc, barcode;
-        int quant, min_quant;
+        int available, allocated, alert;
 
+        // Button initialization
         Button btn = findViewById(R.id.item_crud_action);
         Button btnBarcode = findViewById(R.id.item_crud_barcode_button);
         buttonBarcodeListener(btnBarcode);
@@ -106,60 +130,98 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
             // View
             case REQUEST_CODE_VIEW:
 
-                // Disable Text fields
-                this.name_et.setEnabled(false);
-                this.desc_et.setEnabled(false);
-                this.quant_et.setEnabled(false);
-                this.barcode_et.setEnabled(false);
-                this.min_quant_et.setEnabled(false);
-
                 // Set Activity Title
                 setTitle(R.string.title_view_item);
 
-                // Get Info
+                Log.e("ITEM_CRUD", "Before Set Visi");
+
+                // Set edit text layout visible
+                this.pickers.setVisibility(View.GONE);
+                this.ets.setVisibility(View.VISIBLE);
+
+                Log.e("ITEM_CRUD", "Past Set Visi");
+
+                // EditTexts
+                EditText availablet, allocatedt, alertt;
+                availablet = findViewById(R.id.item_crud_available_et);
+                allocatedt = findViewById(R.id.item_crud_allocated_et);
+                alertt = findViewById(R.id.item_crud_alert_et);
+
+                // Disable Text fields
+                this.name_et.setEnabled(false);
+                this.desc_et.setEnabled(false);
+                this.barcode_et.setEnabled(false);
+                availablet.setEnabled(false);
+                allocatedt.setEnabled(false);
+                alertt.setEnabled(false);
+
+                Log.e("ITEM_CRUD", "Before Getting Extras");
+
+                // Get Item Info
                 name = this.getIntent().getStringExtra("NAME");
                 desc = this.getIntent().getStringExtra("DESCRIPTION");
-                quant = this.getIntent().getIntExtra("QUANTITY", 0);
                 barcode = this.getIntent().getStringExtra("BARCODE");
-                min_quant = this.getIntent().getIntExtra("MIN_QUANTITY", 0);
+                available = this.getIntent().getIntExtra("QUANTITY", 0);
+                allocated = this.getIntent().getIntExtra("ALLOCATED", 0);
+                alert = this.getIntent().getIntExtra("MIN_QUANTITY", 0);
 
-                // Set Text fields content
+                Log.e("ITEM_CRUD", "After Getting Extras");
+
+                // Set input fields content
                 this.name_et.setText(name);
                 this.desc_et.setText(desc);
-                this.quant_et.setText(String.valueOf(quant));
                 this.barcode_et.setText(barcode);
-                this.min_quant_et.setText(String.valueOf(min_quant));
+                availablet.setText(String.valueOf(available));
+                allocatedt.setText(String.valueOf(allocated));
+                alertt.setText(String.valueOf(alert));
 
-                btnBarcode.setVisibility(View.INVISIBLE);
+                // Remove barcode read button
+                btnBarcode.setVisibility(View.GONE);
+
                 btn.setText("Back");
                 break;
 
             // Edit
             case REQUEST_CODE_EDIT:
 
-                // Enable Text fields
-                this.name_et.setEnabled(true);
-                this.desc_et.setEnabled(true);
-                this.quant_et.setEnabled(true);
-                this.barcode_et.setEnabled(true);
-                this.min_quant_et.setEnabled(true);
-
                 // Set Activity Title
                 setTitle(R.string.title_edit_item);
 
-                // Get Info
+                // Set edit text layout visible
+                this.pickers.setVisibility(View.VISIBLE);
+                this.ets.setVisibility(View.GONE);
+
+                // Enable Text fields
+                this.name_et.setEnabled(true);
+                this.desc_et.setEnabled(true);
+                this.barcode_et.setEnabled(true);
+
+                // Set minimum and maximum quantities for number pickers
+                this.availablep.setMinValue(0);
+                this.availablep.setMaxValue(Integer.MAX_VALUE);
+                this.allocatedp.setMinValue(0);
+                this.allocatedp.setMaxValue(Integer.MAX_VALUE);
+                this.alertp.setMinValue(0);
+                this.alertp.setMaxValue(Integer.MAX_VALUE);
+
+                // Get Item Info
                 name = this.getIntent().getStringExtra("NAME");
                 desc = this.getIntent().getStringExtra("DESCRIPTION");
-                quant = this.getIntent().getIntExtra("QUANTITY", 0);
                 barcode = this.getIntent().getStringExtra("BARCODE");
-                min_quant = this.getIntent().getIntExtra("MIN_QUANTITY", 0);
+                available = this.getIntent().getIntExtra("QUANTITY", 0);
+                allocated = this.getIntent().getIntExtra("ALLOCATED", 0);
+                alert = this.getIntent().getIntExtra("MIN_QUANTITY", 0);
 
-                // Set Text fields content
+                // Set input fields content
                 this.name_et.setText(name);
                 this.desc_et.setText(desc);
-                this.quant_et.setText(String.valueOf(quant));
                 this.barcode_et.setText(barcode);
-                this.min_quant_et.setText(String.valueOf(min_quant));
+                this.availablep.setValue(available);
+                this.allocatedp.setValue(allocated);
+                this.alertp.setValue(alert);
+
+                // Set barcode button visible
+                btnBarcode.setVisibility(View.VISIBLE);
 
                 btn.setText("Save");
                 break;
@@ -167,27 +229,39 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
             // Create
             case REQUEST_CODE_ADD:
 
+                // Set activity title
+                setTitle(R.string.title_add_item);
+
+                // Set edit text layout visible
+                this.pickers.setVisibility(View.VISIBLE);
+                this.ets.setVisibility(View.GONE);
+
                 // Enable Text fields
                 this.name_et.setEnabled(true);
                 this.desc_et.setEnabled(true);
-                this.quant_et.setEnabled(true);
                 this.barcode_et.setEnabled(true);
-                this.min_quant_et.setEnabled(true);
 
-                //Get Info
+                // Set minimum and maximum quantities for number pickers
+                this.availablep.setMinValue(0);
+                this.availablep.setMaxValue(Integer.MAX_VALUE);
+                this.allocatedp.setMinValue(0);
+                this.allocatedp.setMaxValue(Integer.MAX_VALUE);
+                this.alertp.setMinValue(0);
+                this.alertp.setMaxValue(Integer.MAX_VALUE);
+
+                // If launched from barcode button
                 barcode = this.getIntent().getStringExtra("BARCODE");
                 if (barcode != null && !barcode.isEmpty()) {
+
                     this.barcode_et.setText(barcode);
                     this.barcode_et.setEnabled(false);
-                    btnBarcode.setVisibility(View.INVISIBLE);
+                    btnBarcode.setVisibility(View.GONE);
+
+                } else {
+
+                    // Set barcode button visible
+                    btnBarcode.setVisibility(View.VISIBLE);
                 }
-
-                // Set default text field content
-                this.quant_et.setText("0");
-                this.min_quant_et.setText("0");
-
-                // Set activity title
-                setTitle(R.string.title_add_item);
 
                 btn.setText("Create");
                 break;
@@ -204,12 +278,9 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
     @Override
     public void onClick(View v) {
 
-        // Read fields content from the UI
-        String name = this.name_et.getText().toString();
-        String desc = this.desc_et.getText().toString();
-        int quant = Integer.parseInt(this.quant_et.getText().toString());
-        String barcode = this.barcode_et.getText().toString();
-        int min_quant = Integer.parseInt(this.min_quant_et.getText().toString());
+        // Initialize variables
+        String name, desc, barcode;
+        int available, allocated, alert;
 
         switch (this.requestCode) {
 
@@ -222,24 +293,46 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
 
             // Add Warehouse
             case REQUEST_CODE_ADD:
-                addItem(name, desc, quant, barcode, min_quant);
+
+                // Read input from UI
+                name = this.name_et.getText().toString();
+                desc = this.desc_et.getText().toString();
+                barcode = this.barcode_et.getText().toString();
+                available = this.availablep.getValue();
+                allocated = this.allocatedp.getValue();
+                alert = this.alertp.getValue();
+
+                addItem(name, desc, available, barcode, alert);
                 break;
 
             // Edit Warehouse
             case REQUEST_CODE_EDIT:
+
+                // Read input from UI
+                name = this.name_et.getText().toString();
+                desc = this.desc_et.getText().toString();
+                barcode = this.barcode_et.getText().toString();
+                available = this.availablep.getValue();
+                allocated = this.allocatedp.getValue();
+                alert = this.alertp.getValue();
+
                 int id = this.getIntent().getIntExtra("ITEM_ID", -1);
-                editItem(id, name, desc, quant, barcode, min_quant);
+                editItem(id, name, desc, available, barcode, alert);
                 break;
         }
     }
 
+    /**
+     * On barcode read button click.
+     *
+     * @param btn The barcode read button.
+     */
     public void buttonBarcodeListener(Button btn){
         btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
                 new IntentIntegrator(ItemCrudActivity.this).initiateScan();
             }
         });
-
     }
 
     /**
