@@ -83,19 +83,15 @@ public class ItemController {
      * @param wid          The warehouse id.
      * @param name         The item name.
      * @param description  The item description.
-     * @param quantity     The item quantity.
      * @param barcode      The barcode of the item.
-     * @param min_quantity The item alert quantity.
+     * @param available    The available quantity.
+     * @param allocated    The allocated quantity.
+     * @param alert        The alert quantity.
      * @return Request The request object to be queued on the request queue.
      * @throws JSONException
      */
-    public Request post(int wid, String name, String description, int quantity,
-                        String barcode, int min_quantity) throws JSONException {
-
-        // Default quantity is 1
-        if (quantity == 0) {
-            quantity = 1;
-        }
+    public Request post(int wid, String name, String description, String barcode,
+                        int available, int allocated, int alert) throws JSONException {
 
         // Allow empty barcode
         if (barcode == null) {
@@ -107,9 +103,10 @@ public class ItemController {
 
         json.put("name", name);
         json.put("description", description);
-        json.put("quantity", quantity);
         json.put("barcode", barcode);
-        json.put("min_quantity", min_quantity);
+        json.put("available", available);
+        json.put("allocated", allocated);
+        json.put("alert", alert);
 
         // Create request
         Request request = new Request.Builder()
@@ -165,6 +162,54 @@ public class ItemController {
                 .addHeader("Authorization", this.authorization)
                 .url(ApiHandler.getInstance().getBaseUrl() + this.url.replace("{wid}", String.valueOf(wid)) + "/" + id)
                 .delete()
+                .build();
+
+        return request;
+    }
+
+    /**
+     * Increments an item's available units quantity.
+     *
+     * @param wid The warehouse id.
+     * @param id  The item id.
+     * @return Request The request object to be queued on the request queue.
+     */
+    public Request incrementAvailable(int wid, int id) {
+
+        String url = new StringBuilder()
+                .append(ApiHandler.getInstance().getBaseUrl())
+                .append(this.url.replace("{wid}", String.valueOf(wid)))
+                .append("/").append(id).append("/units?unit=available").toString();
+
+        // Create request
+        Request request = new Request.Builder()
+                .addHeader("Authorization", this.authorization)
+                .url(url)
+                .post(null)
+                .build();
+
+        return request;
+    }
+
+    /**
+     * Increments an item's allocated units quantity.
+     *
+     * @param wid The warehouse id.
+     * @param id  The item id.
+     * @return Request The request object to be queued on the request queue.
+     */
+    public Request incrementAllocated(int wid, int id) {
+
+        String url = new StringBuilder()
+                .append(ApiHandler.getInstance().getBaseUrl())
+                .append(this.url.replace("{wid}", String.valueOf(wid)))
+                .append("/").append(id).append("/units?unit=allocated").toString();
+
+        // Create request
+        Request request = new Request.Builder()
+                .addHeader("Authorization", this.authorization)
+                .url(url)
+                .post(null)
                 .build();
 
         return request;
