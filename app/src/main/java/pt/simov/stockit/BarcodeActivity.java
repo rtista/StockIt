@@ -1,13 +1,11 @@
 package pt.simov.stockit;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,7 +23,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 
 import okhttp3.Call;
@@ -189,9 +186,10 @@ public class BarcodeActivity extends AppCompatActivity implements BarcodeCallbac
                                     it.getInt("id"),
                                     it.getString("name"),
                                     it.getString("description"),
-                                    it.getInt("quantity"),
                                     it.getString("barcode"),
-                                    it.getInt("min_quantity")
+                                    it.getInt("available"),
+                                    it.getInt("allocated"),
+                                    it.getInt("alert")
                             );
 
                             Log.e("ITEM_DEBUG", "Item Barcode: " + item.getBarcode());
@@ -207,9 +205,10 @@ public class BarcodeActivity extends AppCompatActivity implements BarcodeCallbac
                                     iViewItem.putExtra("WAREHOUSE_ID", wid);
                                     iViewItem.putExtra("NAME", item.getName());
                                     iViewItem.putExtra("DESCRIPTION", item.getDescription());
-                                    iViewItem.putExtra("QUANTITY", item.getQuantity());
                                     iViewItem.putExtra("BARCODE", item.getBarcode());
-                                    iViewItem.putExtra("MIN_QUANTITY", item.getMin_quantity());
+                                    iViewItem.putExtra("AVAILABLE", item.getAvailable());
+                                    iViewItem.putExtra("ALLOCATED", item.getAllocated());
+                                    iViewItem.putExtra("ALERT", item.getAlert());
 
                                     iViewItem.putExtra("REQUEST_CODE", ItemCrudActivity.REQUEST_CODE_VIEW);
                                     startActivityForResult(iViewItem, ItemCrudActivity.REQUEST_CODE_VIEW);
@@ -317,12 +316,7 @@ public class BarcodeActivity extends AppCompatActivity implements BarcodeCallbac
      */
     private void increment(Item item) {
 
-        HashMap<String, Object> map = new HashMap<>();
-
-        map.put("quantity", item.getQuantity() + 1);
-
-        try {
-            Request req = this.apiHandler.item().patch(this.wid, item.getId(), map);
+        Request req = this.apiHandler.item().incrementAvailable(this.wid, item.getId());
 
             this.client.newCall(req).enqueue(new Callback() {
                 @Override
@@ -403,11 +397,6 @@ public class BarcodeActivity extends AppCompatActivity implements BarcodeCallbac
                     }
                 }
             });
-
-        } catch (JSONException e) {
-
-            Log.e("Add_Quantity", "JSON Exception: " + e.getMessage());
-        }
     }
 
     /**

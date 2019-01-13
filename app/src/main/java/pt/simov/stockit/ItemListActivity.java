@@ -200,9 +200,10 @@ public class ItemListActivity extends AppCompatActivity {
                 i.putExtra("WAREHOUSE_ID", this.wid);
                 i.putExtra("NAME", feed.get(pos).getName());
                 i.putExtra("DESCRIPTION", feed.get(pos).getDescription());
-                i.putExtra("QUANTITY", feed.get(pos).getQuantity());
                 i.putExtra("BARCODE", feed.get(pos).getBarcode());
-                i.putExtra("MIN_QUANTITY", feed.get(pos).getMin_quantity());
+                i.putExtra("AVAILABLE", feed.get(pos).getAvailable());
+                i.putExtra("ALLOCATED", feed.get(pos).getAllocated());
+                i.putExtra("ALERT", feed.get(pos).getAlert());
 
                 i.putExtra("REQUEST_CODE", ItemCrudActivity.REQUEST_CODE_VIEW);
                 startActivityForResult(i, ItemCrudActivity.REQUEST_CODE_VIEW);
@@ -217,9 +218,10 @@ public class ItemListActivity extends AppCompatActivity {
                 i.putExtra("ITEM_ID", feed.get(pos).getId());
                 i.putExtra("NAME", feed.get(pos).getName());
                 i.putExtra("DESCRIPTION", feed.get(pos).getDescription());
-                i.putExtra("QUANTITY", feed.get(pos).getQuantity());
                 i.putExtra("BARCODE", feed.get(pos).getBarcode());
-                i.putExtra("MIN_QUANTITY", feed.get(pos).getMin_quantity());
+                i.putExtra("AVAILABLE", feed.get(pos).getAvailable());
+                i.putExtra("ALLOCATED", feed.get(pos).getAllocated());
+                i.putExtra("ALERT", feed.get(pos).getAlert());
 
                 i.putExtra("REQUEST_CODE", ItemCrudActivity.REQUEST_CODE_EDIT);
                 startActivityForResult(i, ItemCrudActivity.REQUEST_CODE_EDIT);
@@ -347,9 +349,10 @@ public class ItemListActivity extends AppCompatActivity {
                                                 it.getInt("id"),
                                                 it.getString("name"),
                                                 it.getString("description"),
-                                                it.getInt("quantity"),
                                                 it.getString("barcode"),
-                                                it.getInt("min_quantity")
+                                                it.getInt("available"),
+                                                it.getInt("allocated"),
+                                                it.getInt("alert")
                                         )
                                 );
                             }

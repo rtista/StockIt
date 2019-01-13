@@ -81,11 +81,8 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        Log.e("ITEM_CRUD", "Wtf");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_crud);
-
-        Log.e("ITEM_CRUD", "Wtf");
 
         this.requestCode = this.getIntent().getIntExtra("REQUEST_CODE", 0);
         this.wid = this.getIntent().getIntExtra("WAREHOUSE_ID", 0);
@@ -266,6 +263,7 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
                 btn.setText("Create");
                 break;
         }
+
         // Set on click button listener
         btn.setOnClickListener(this);
     }
@@ -302,7 +300,7 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
                 allocated = this.allocatedp.getValue();
                 alert = this.alertp.getValue();
 
-                addItem(name, desc, available, barcode, alert);
+                addItem(name, desc, barcode, available, allocated, alert);
                 break;
 
             // Edit Warehouse
@@ -317,7 +315,7 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
                 alert = this.alertp.getValue();
 
                 int id = this.getIntent().getIntExtra("ITEM_ID", -1);
-                editItem(id, name, desc, available, barcode, alert);
+                editItem(id, name, desc, barcode, available, allocated, alert);
                 break;
         }
     }
@@ -340,17 +338,18 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
      *
      * @param name         The item name.
      * @param description  The item description.
-     * @param quantity     The item quantity.
      * @param barcode      The item barcode.
-     * @param min_quantity The item alert quantity.
+     * @param available    The available quantity.
+     * @param allocated    The allocated quantity.
+     * @param alert        The alert quantity.
      */
-    private void addItem(String name, String description, int quantity, String barcode,
-                         int min_quantity) {
+    private void addItem(String name, String description, String barcode,
+                         int available, int allocated, int alert) {
 
         // Create request
         try {
             Request req = this.apiHandler.item().post(this.wid, name, description,
-                    quantity, barcode, min_quantity);
+                    barcode, available, allocated, alert);
 
             this.handleRequest(req);
 
@@ -361,14 +360,19 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
     }
 
     /**
-     * Modifies the warehouse.
+     * Modifies an item in the warehouse.
      *
      * @param id          The warehouse id.
-     * @param name        The warehouse name.
-     * @param description The warehouse description.
+     *
+     * @param name         The item name.
+     * @param description  The item description.
+     * @param barcode      The item barcode.
+     * @param available    The available quantity.
+     * @param allocated    The allocated quantity.
+     * @param alert        The alert quantity.
      */
-    private void editItem(int id, String name, String description, int quantity,
-                          String barcode, int min_quantity) {
+    private void editItem(int id, String name, String description, String barcode,
+                          int available, int allocated, int alert) {
 
         HashMap<String, Object> map = new HashMap<>();
 
@@ -387,8 +391,9 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
             map.put("barcode", barcode);
         }
 
-        map.put("quantity", quantity);
-        map.put("min_quantity", min_quantity);
+        map.put("available", available);
+        map.put("allocated", allocated);
+        map.put("alert", alert);
 
         // If there are modified items
         if (map.size() > 0) {
@@ -432,6 +437,8 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
                     // Success on the request
                     case 200:
 
+                        Log.e("ITEM_CRUD", "im success");
+
                         setResult(RESULT_CODE_SUCCESS, ItemCrudActivity.this.getIntent());
 
                         // Finish activity
@@ -441,6 +448,8 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
 
                     // Success on the request
                     case 201:
+
+                        Log.e("ITEM_CRUD", "im successs 201");
 
                         setResult(RESULT_CODE_SUCCESS, ItemCrudActivity.this.getIntent());
 
@@ -476,6 +485,8 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
                     case 500:
 
                         setResult(RESULT_CODE_FAILURE, ItemCrudActivity.this.getIntent());
+
+                        Log.e("ITEM_CRUD", "im 500");
                         break;
 
                     default:
