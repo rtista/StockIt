@@ -176,6 +176,11 @@ public class ItemController {
      */
     public Request incrementAvailable(int wid, int id) {
 
+        // Create JSON body
+        JSONObject json = new JSONObject();
+
+
+
         String url = new StringBuilder()
                 .append(ApiHandler.getInstance().getBaseUrl())
                 .append(this.url.replace("{wid}", String.valueOf(wid)))
@@ -185,7 +190,7 @@ public class ItemController {
         Request request = new Request.Builder()
                 .addHeader("Authorization", this.authorization)
                 .url(url)
-                .post(null)
+                .post(RequestBody.create(JSON, json.toString()))
                 .build();
 
         return request;
@@ -200,6 +205,9 @@ public class ItemController {
      */
     public Request incrementAllocated(int wid, int id) {
 
+        // Create JSON body
+        JSONObject json = new JSONObject();
+
         String url = new StringBuilder()
                 .append(ApiHandler.getInstance().getBaseUrl())
                 .append(this.url.replace("{wid}", String.valueOf(wid)))
@@ -209,7 +217,7 @@ public class ItemController {
         Request request = new Request.Builder()
                 .addHeader("Authorization", this.authorization)
                 .url(url)
-                .post(null)
+                .post(RequestBody.create(JSON, json.toString()))
                 .build();
 
         return request;

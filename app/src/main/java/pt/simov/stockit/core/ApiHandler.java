@@ -16,7 +16,7 @@ public class ApiHandler {
      * The API URL location.
      * Todo: Make this config changeable
      */
-    private final String url = "http://192.168.1.91:8000/api";
+    private final String url = "http://192.168.8.246:8000/api";
 
     /**
      * The handler's item controller.

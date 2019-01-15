@@ -317,6 +317,7 @@ public class BarcodeActivity extends AppCompatActivity implements BarcodeCallbac
     private void increment(Item item) {
 
         Request req = this.apiHandler.item().incrementAvailable(this.wid, item.getId());
+        Log.e("BarcodeActivity", "WElelel");
 
             this.client.newCall(req).enqueue(new Callback() {
                 @Override
@@ -390,6 +391,7 @@ public class BarcodeActivity extends AppCompatActivity implements BarcodeCallbac
                                     Toast.makeText(BarcodeActivity.this, "Internal Server Error", Toast.LENGTH_SHORT).show();
                                 }
                             });
+                            Log.e("BarcodeActivity", "Internal Server Error");
                             break;
 
                         default:
