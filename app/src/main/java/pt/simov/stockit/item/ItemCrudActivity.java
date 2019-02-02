@@ -1,4 +1,4 @@
-package pt.simov.stockit;
+package pt.simov.stockit.item;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -24,6 +24,7 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import pt.simov.stockit.R;
 import pt.simov.stockit.core.ApiHandler;
 import pt.simov.stockit.core.http.HttpClient;
 
@@ -66,6 +67,7 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
      * Input fields.
      */
     private EditText name_et, desc_et, barcode_et;
+    private EditText availablet, allocatedt, alertt;
     private NumberPicker availablep, allocatedp, alertp;
 
     /**
@@ -91,6 +93,9 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
         this.name_et = findViewById(R.id.item_crud_et_name);
         this.desc_et = findViewById(R.id.item_crud_description);
         this.barcode_et = findViewById(R.id.item_crud_barcode);
+        this.availablet = findViewById(R.id.item_crud_available_et);
+        this.allocatedt = findViewById(R.id.item_crud_allocated_et);
+        this.alertt = findViewById(R.id.item_crud_alert_et);
 
         // Number Pickers
         this.availablep = findViewById(R.id.item_crud_available_picker);
@@ -130,47 +135,33 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
                 // Set Activity Title
                 setTitle(R.string.title_view_item);
 
-                Log.e("ITEM_CRUD", "Before Set Visi");
-
                 // Set edit text layout visible
                 this.pickers.setVisibility(View.GONE);
                 this.ets.setVisibility(View.VISIBLE);
 
-                Log.e("ITEM_CRUD", "Past Set Visi");
-
-                // EditTexts
-                EditText availablet, allocatedt, alertt;
-                availablet = findViewById(R.id.item_crud_available_et);
-                allocatedt = findViewById(R.id.item_crud_allocated_et);
-                alertt = findViewById(R.id.item_crud_alert_et);
-
-                // Disable Text fields
+                // Disable input fields
                 this.name_et.setEnabled(false);
                 this.desc_et.setEnabled(false);
                 this.barcode_et.setEnabled(false);
-                availablet.setEnabled(false);
-                allocatedt.setEnabled(false);
-                alertt.setEnabled(false);
-
-                Log.e("ITEM_CRUD", "Before Getting Extras");
+                this.availablet.setEnabled(false);
+                this.allocatedt.setEnabled(false);
+                this.alertt.setEnabled(false);
 
                 // Get Item Info
                 name = this.getIntent().getStringExtra("NAME");
                 desc = this.getIntent().getStringExtra("DESCRIPTION");
                 barcode = this.getIntent().getStringExtra("BARCODE");
-                available = this.getIntent().getIntExtra("QUANTITY", 0);
+                available = this.getIntent().getIntExtra("AVAILABLE", 0);
                 allocated = this.getIntent().getIntExtra("ALLOCATED", 0);
-                alert = this.getIntent().getIntExtra("MIN_QUANTITY", 0);
-
-                Log.e("ITEM_CRUD", "After Getting Extras");
+                alert = this.getIntent().getIntExtra("ALERT", 0);
 
                 // Set input fields content
                 this.name_et.setText(name);
                 this.desc_et.setText(desc);
                 this.barcode_et.setText(barcode);
-                availablet.setText(String.valueOf(available));
-                allocatedt.setText(String.valueOf(allocated));
-                alertt.setText(String.valueOf(alert));
+                this.availablet.setText(String.valueOf(available));
+                this.allocatedt.setText(String.valueOf(allocated));
+                this.alertt.setText(String.valueOf(alert));
 
                 // Remove barcode read button
                 btnBarcode.setVisibility(View.GONE);
@@ -197,7 +188,7 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
                 this.availablep.setMinValue(0);
                 this.availablep.setMaxValue(Integer.MAX_VALUE);
                 this.allocatedp.setMinValue(0);
-                this.allocatedp.setMaxValue(Integer.MAX_VALUE);
+                this.allocatedp.setMaxValue(this.availablep.getValue());
                 this.alertp.setMinValue(0);
                 this.alertp.setMaxValue(Integer.MAX_VALUE);
 
@@ -242,7 +233,7 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
                 this.availablep.setMinValue(0);
                 this.availablep.setMaxValue(Integer.MAX_VALUE);
                 this.allocatedp.setMinValue(0);
-                this.allocatedp.setMaxValue(Integer.MAX_VALUE);
+                this.allocatedp.setMaxValue(this.availablep.getValue());
                 this.alertp.setMinValue(0);
                 this.alertp.setMaxValue(Integer.MAX_VALUE);
 
@@ -411,7 +402,7 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
     }
 
     /**
-     * Creates a warehouse via REST API.
+     * Creates an item via REST API.
      *
      * @param req The request to be made.
      */
@@ -420,6 +411,8 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
         this.client.newCall(req).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
+
+                Log.e("REQUEST_FAIL", e.getMessage());
 
                 runOnUiThread(new Runnable() {
                     @Override
