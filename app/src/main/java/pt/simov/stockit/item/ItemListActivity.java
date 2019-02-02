@@ -1,4 +1,4 @@
-package pt.simov.stockit;
+package pt.simov.stockit.item;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -28,11 +27,12 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import pt.simov.stockit.R;
 import pt.simov.stockit.core.ApiHandler;
-import pt.simov.stockit.core.domain.Warehouse;
+import pt.simov.stockit.core.domain.Item;
 import pt.simov.stockit.core.http.HttpClient;
 
-public class WarehouseListActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
+public class ItemListActivity extends AppCompatActivity {
 
     /**
      * The StockIt backend API handler.
@@ -47,68 +47,88 @@ public class WarehouseListActivity extends AppCompatActivity implements AdapterV
     /**
      * The list which contains the warehouse entities.
      */
-    private ArrayList<Warehouse> feed = new ArrayList<>();
+    private ArrayList<Item> feed = new ArrayList<>();
 
     /**
      * The list view adapter.
      */
-    private WarehouseListAdapter wAdapter = new WarehouseListAdapter(this.feed);
+    private ItemListAdapter wAdapter = new ItemListAdapter(this.feed);
 
     /**
      * The list view which will hold the warehouse items.
      */
-    ListView lv;
+    private ListView lv;
+
+    /**
+     * The warehouse id.
+     */
+    private int wid;
 
     /**
      * On creation of the activity.
+     *
      * @param savedInstanceState
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_warehouse_list);
-        setTitle(R.string.title_warehouses);
-
+        setContentView(R.layout.activity_item_list);
+        setTitle(R.string.title_inventory);
 
         // Text View
-        TextView tv = findViewById(R.id.warehouses_title);
-        tv.setText("Warehouses of @User");
+        // TextView tv = findViewById(R.id.items_title);
+        // tv.setText("Item of @User");
 
         // Update display
-        this.lv = findViewById(R.id.warehouses_list);
+        this.lv = findViewById(R.id.inventory_list);
 
         // Set list view
-        this.getWarehouses();
+        this.wid = this.getIntent().getIntExtra("WAREHOUSE_ID", 0);
+        this.getItems();
 
         // Add Context menu
         registerForContextMenu(this.lv);
     }
 
     /**
+     * On resume update the display.
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        // Update list
+        this.getItems();
+    }
+
+    /**
      * Inflate the options menu.
+     *
      * @param menu Options menu.
      * @return boolean
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.warehouses_optionsmenu, menu);
+        getMenuInflater().inflate(R.menu.inventory_optionsmenu, menu);
         return true;
     }
 
     /**
      * Inflate context menu.
-     * @param menu The context menu.
-     * @param v The view.
+     *
+     * @param menu     The context menu.
+     * @param v        The view.
      * @param menuInfo The menu info.
      */
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        getMenuInflater().inflate(R.menu.warehouses_contextmenu, menu);
+        getMenuInflater().inflate(R.menu.inventory_contextmenu, menu);
     }
 
     /**
      * On Option Menu item selection.
+     *
      * @param item The selected item.
      * @return boolean
      */
@@ -118,21 +138,36 @@ public class WarehouseListActivity extends AppCompatActivity implements AdapterV
         // Handle item selection
         switch (item.getItemId()) {
 
-            // On Add warehouse option
-            case R.id.wom_add:
+            // On Add item option
+            case R.id.iom_add:
 
                 // Start activity for result
-                Intent i = new Intent(this, WarehouseCrudActivity.class);
+                Intent i = new Intent(this, ItemCrudActivity.class);
 
-                i.putExtra("REQUEST_CODE", WarehouseCrudActivity.REQUEST_CODE_ADD);
-                startActivityForResult(i, WarehouseCrudActivity.REQUEST_CODE_ADD);
+                i.putExtra("WAREHOUSE_ID", this.wid);
+
+                i.putExtra("REQUEST_CODE", ItemCrudActivity.REQUEST_CODE_ADD);
+                startActivityForResult(i, ItemCrudActivity.REQUEST_CODE_ADD);
                 break;
 
-            case R.id.wom_logout:
-                i = new Intent(this, LoginActivity.class);
-                //TODO Logout operation
-                startActivity(i);
-                finish();
+            case R.id.iom_barcode_read:
+
+                Intent iBarcodeRead = new Intent(this, BarcodeActivity.class);
+
+                iBarcodeRead.putExtra("WAREHOUSE_ID", this.wid);
+
+                iBarcodeRead.putExtra("REQUEST_CODE", BarcodeActivity.REQUEST_CODE_READ);
+                startActivity(iBarcodeRead);
+                break;
+
+            case R.id.iom_barcode_write:
+
+                Intent iBarcodeWrite = new Intent(this, BarcodeActivity.class);
+
+                iBarcodeWrite.putExtra("WAREHOUSE_ID", this.wid);
+
+                iBarcodeWrite.putExtra("REQUEST_CODE", BarcodeActivity.REQUEST_CODE_WRITE);
+                startActivity(iBarcodeWrite);
                 break;
 
             default:
@@ -159,46 +194,52 @@ public class WarehouseListActivity extends AppCompatActivity implements AdapterV
         switch (item.getItemId()) {
 
             // On edit option
-            case R.id.wcm_view:
+            case R.id.icm_view:
 
-                i = new Intent(getApplicationContext(), WarehouseCrudActivity.class);
+                i = new Intent(getApplicationContext(), ItemCrudActivity.class);
 
-                i.putExtra("NAME", feed.get(pos).get_name());
-                i.putExtra("DESCRIPTION", feed.get(pos).get_description());
-                i.putExtra("LATITUDE", feed.get(pos).get_lat());
-                i.putExtra("LONGITUDE", feed.get(pos).get_long());
+                i.putExtra("WAREHOUSE_ID", this.wid);
+                i.putExtra("NAME", feed.get(pos).getName());
+                i.putExtra("DESCRIPTION", feed.get(pos).getDescription());
+                i.putExtra("BARCODE", feed.get(pos).getBarcode());
+                i.putExtra("AVAILABLE", feed.get(pos).getAvailable());
+                i.putExtra("ALLOCATED", feed.get(pos).getAllocated());
+                i.putExtra("ALERT", feed.get(pos).getAlert());
 
-                i.putExtra("REQUEST_CODE", WarehouseCrudActivity.REQUEST_CODE_VIEW);
-                startActivityForResult(i, WarehouseCrudActivity.REQUEST_CODE_VIEW);
+                i.putExtra("REQUEST_CODE", ItemCrudActivity.REQUEST_CODE_VIEW);
+                startActivityForResult(i, ItemCrudActivity.REQUEST_CODE_VIEW);
                 break;
 
             // On edit option
-            case R.id.wcm_edit:
+            case R.id.icm_edit:
 
-                i = new Intent(getApplicationContext(), WarehouseCrudActivity.class);
+                i = new Intent(getApplicationContext(), ItemCrudActivity.class);
 
-                i.putExtra("WAREHOUSE_ID", feed.get(pos).get_id());
-                i.putExtra("NAME", feed.get(pos).get_name());
-                i.putExtra("DESCRIPTION", feed.get(pos).get_description());
-                i.putExtra("LATITUDE", feed.get(pos).get_lat());
-                i.putExtra("LONGITUDE", feed.get(pos).get_long());
+                i.putExtra("WAREHOUSE_ID", this.wid);
+                i.putExtra("ITEM_ID", feed.get(pos).getId());
+                i.putExtra("NAME", feed.get(pos).getName());
+                i.putExtra("DESCRIPTION", feed.get(pos).getDescription());
+                i.putExtra("BARCODE", feed.get(pos).getBarcode());
+                i.putExtra("AVAILABLE", feed.get(pos).getAvailable());
+                i.putExtra("ALLOCATED", feed.get(pos).getAllocated());
+                i.putExtra("ALERT", feed.get(pos).getAlert());
 
-                i.putExtra("REQUEST_CODE", WarehouseCrudActivity.REQUEST_CODE_EDIT);
-                startActivityForResult(i, WarehouseCrudActivity.REQUEST_CODE_EDIT);
+                i.putExtra("REQUEST_CODE", ItemCrudActivity.REQUEST_CODE_EDIT);
+                startActivityForResult(i, ItemCrudActivity.REQUEST_CODE_EDIT);
                 break;
 
             // On delete option
-            case R.id.wcm_delete:
+            case R.id.icm_delete:
 
                 new AlertDialog.Builder(this)
-                        .setTitle("Delete Warehouse")
-                        .setMessage("Do you want to delete this warehouse?")
+                        .setTitle("Delete Item")
+                        .setMessage("Do you want to delete this item?")
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
 
                             public void onClick(DialogInterface dialog, int whichButton) {
 
-                                WarehouseListActivity.this.deleteWarehouse(feed.get(pos).get_id());
+                                ItemListActivity.this.deleteItem(feed.get(pos).getId());
                             }
                         })
                         .setNegativeButton(android.R.string.no, null).show();
@@ -209,24 +250,6 @@ public class WarehouseListActivity extends AppCompatActivity implements AdapterV
         }
 
         return true;
-    }
-
-    /**
-     * On warehouse list view item click go into list of items.
-     *
-     * @param parent   The parent view.
-     * @param view     The view.
-     * @param position The position of the item.
-     * @param id       The id of the item.
-     */
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-        Intent i = new Intent(getApplicationContext(), ItemListActivity.class);
-
-        i.putExtra("WAREHOUSE_ID", feed.get(position).get_id());
-
-        startActivity(i);
     }
 
     /**
@@ -242,27 +265,27 @@ public class WarehouseListActivity extends AppCompatActivity implements AdapterV
         switch (requestCode) {
 
             // Added warehouse
-            case WarehouseCrudActivity.REQUEST_CODE_ADD:
+            case ItemCrudActivity.REQUEST_CODE_ADD:
 
                 // If success
-                if (resultCode == WarehouseCrudActivity.RESULT_CODE_SUCCESS) {
+                if (resultCode == ItemCrudActivity.RESULT_CODE_SUCCESS) {
 
-                    // Refresh warehouses list
-                    this.getWarehouses();
-                    Toast.makeText(this, "Warehouse created successfully.", Toast.LENGTH_SHORT).show();
+                    // Refresh items list
+                    this.getItems();
+                    Toast.makeText(this, "Item created successfully.", Toast.LENGTH_SHORT).show();
                 }
 
                 break;
 
             // Edited warehouse
-            case WarehouseCrudActivity.REQUEST_CODE_EDIT:
+            case ItemCrudActivity.REQUEST_CODE_EDIT:
 
                 // If success
-                if (resultCode == WarehouseCrudActivity.RESULT_CODE_SUCCESS) {
+                if (resultCode == ItemCrudActivity.RESULT_CODE_SUCCESS) {
 
-                    // Refresh warehouses list
-                    this.getWarehouses();
-                    Toast.makeText(this, "Warehouse edited successfully.", Toast.LENGTH_SHORT).show();
+                    // Refresh items list
+                    this.getItems();
+                    Toast.makeText(this, "Item edited successfully.", Toast.LENGTH_SHORT).show();
                 }
 
             default:
@@ -271,14 +294,13 @@ public class WarehouseListActivity extends AppCompatActivity implements AdapterV
     }
 
     /**
-     * Update the warehouses list view.
+     * Update the warehouse item list view.
      */
     public void updateDisplay() {
 
         // Update the list view
-        this.wAdapter = new WarehouseListAdapter(this.feed);
+        this.wAdapter = new ItemListAdapter(this.feed);
         this.lv.setAdapter(this.wAdapter);
-        this.lv.setOnItemClickListener(this);
         lv.setSelection(0);
     }
 
@@ -287,9 +309,9 @@ public class WarehouseListActivity extends AppCompatActivity implements AdapterV
      *
      * @return boolean
      */
-    private void getWarehouses() {
+    private void getItems() {
 
-        Request req = this.apiHandler.warehouse().get();
+        Request req = this.apiHandler.item().get(this.wid);
 
         this.client.newCall(req).enqueue(new Callback() {
             @Override
@@ -298,7 +320,7 @@ public class WarehouseListActivity extends AppCompatActivity implements AdapterV
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(WarehouseListActivity.this, "Sad life :(", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ItemListActivity.this, "Sad life :(", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -314,22 +336,24 @@ public class WarehouseListActivity extends AppCompatActivity implements AdapterV
                         // Read Json Object from response body
                         try {
 
-                            JSONArray warehouses = new JSONObject(response.body().string()).getJSONArray("warehouses");
+                            JSONArray items = new JSONObject(response.body().string()).getJSONArray("items");
 
                             // Empty Array
-                            WarehouseListActivity.this.feed.clear();
+                            ItemListActivity.this.feed.clear();
 
                             // Fill array
-                            for (int i = 0; i < warehouses.length(); i++) {
+                            for (int i = 0; i < items.length(); i++) {
 
-                                JSONObject wh = warehouses.getJSONObject(i);
-                                WarehouseListActivity.this.feed.add(
-                                        new Warehouse(
-                                                wh.getInt("id"),
-                                                wh.getString("name"),
-                                                wh.getString("description"),
-                                                wh.getString("latitude"),
-                                                wh.getString("longitude")
+                                JSONObject it = items.getJSONObject(i);
+                                ItemListActivity.this.feed.add(
+                                        new Item(
+                                                it.getInt("id"),
+                                                it.getString("name"),
+                                                it.getString("description"),
+                                                it.getString("barcode"),
+                                                it.getInt("available"),
+                                                it.getInt("allocated"),
+                                                it.getInt("alert")
                                         )
                                 );
                             }
@@ -338,12 +362,12 @@ public class WarehouseListActivity extends AppCompatActivity implements AdapterV
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    WarehouseListActivity.this.updateDisplay();
+                                    ItemListActivity.this.updateDisplay();
                                 }
                             });
 
                         } catch (JSONException e) {
-                            Log.e("WAREHOUSE_LIST", "JSON Exception: " + e.getMessage());
+                            Log.e("ITEM_LIST", "JSON Exception: " + e.getMessage());
                         }
 
                         break;
@@ -354,7 +378,7 @@ public class WarehouseListActivity extends AppCompatActivity implements AdapterV
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(WarehouseListActivity.this, "Unauthorized", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ItemListActivity.this, "Unauthorized", Toast.LENGTH_SHORT).show();
                             }
                         });
                         break;
@@ -364,7 +388,7 @@ public class WarehouseListActivity extends AppCompatActivity implements AdapterV
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(WarehouseListActivity.this, "Bad Request", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ItemListActivity.this, "Bad Request", Toast.LENGTH_SHORT).show();
                             }
                         });
                         break;
@@ -374,7 +398,7 @@ public class WarehouseListActivity extends AppCompatActivity implements AdapterV
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(WarehouseListActivity.this, "Internal Server Error", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ItemListActivity.this, "Internal Server Error", Toast.LENGTH_SHORT).show();
                             }
                         });
                         break;
@@ -384,13 +408,13 @@ public class WarehouseListActivity extends AppCompatActivity implements AdapterV
     }
 
     /**
-     * Deletes a warehouse.
+     * Deletes an item.
      *
-     * @param id The warehouse id.
+     * @param id The item id.
      */
-    private void deleteWarehouse(int id) {
+    private void deleteItem(int id) {
 
-        Request req = this.apiHandler.warehouse().delete(id);
+        Request req = this.apiHandler.item().delete(this.wid, id);
 
         this.client.newCall(req).enqueue(new Callback() {
             @Override
@@ -399,7 +423,7 @@ public class WarehouseListActivity extends AppCompatActivity implements AdapterV
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(WarehouseListActivity.this, "Sad life :(", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ItemListActivity.this, "Sad life :(", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
@@ -416,8 +440,8 @@ public class WarehouseListActivity extends AppCompatActivity implements AdapterV
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(WarehouseListActivity.this, "Warehouse deleted", Toast.LENGTH_SHORT).show();
-                                WarehouseListActivity.this.getWarehouses();
+                                Toast.makeText(ItemListActivity.this, "Item deleted", Toast.LENGTH_SHORT).show();
+                                ItemListActivity.this.getItems();
                             }
                         });
 
@@ -429,7 +453,7 @@ public class WarehouseListActivity extends AppCompatActivity implements AdapterV
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(WarehouseListActivity.this, "Unauthorized", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ItemListActivity.this, "Unauthorized", Toast.LENGTH_SHORT).show();
                             }
                         });
                         break;
@@ -440,7 +464,7 @@ public class WarehouseListActivity extends AppCompatActivity implements AdapterV
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(WarehouseListActivity.this, "Warehouse Not Found", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ItemListActivity.this, "Item Not Found", Toast.LENGTH_SHORT).show();
                             }
                         });
                         break;
@@ -450,7 +474,7 @@ public class WarehouseListActivity extends AppCompatActivity implements AdapterV
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(WarehouseListActivity.this, "Internal Server Error", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(ItemListActivity.this, "Internal Server Error", Toast.LENGTH_SHORT).show();
                             }
                         });
                         break;

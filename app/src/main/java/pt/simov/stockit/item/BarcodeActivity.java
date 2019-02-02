@@ -1,4 +1,4 @@
-package pt.simov.stockit;
+package pt.simov.stockit.item;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -23,6 +23,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import okhttp3.Call;
@@ -30,6 +31,7 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import pt.simov.stockit.R;
 import pt.simov.stockit.core.ApiHandler;
 import pt.simov.stockit.core.domain.Item;
 import pt.simov.stockit.core.http.HttpClient;
@@ -316,12 +318,24 @@ public class BarcodeActivity extends AppCompatActivity implements BarcodeCallbac
      */
     private void increment(Item item) {
 
-        Request req = this.apiHandler.item().incrementAvailable(this.wid, item.getId());
-        Log.e("BarcodeActivity", "WElelel");
+        HashMap<String, Object> params = new HashMap<>();
 
-            this.client.newCall(req).enqueue(new Callback() {
+        // Increment count
+        params.put("available", item.getAvailable() + 1);
+
+        Request req = null;
+        try {
+            req = this.apiHandler.item().patch(this.wid, item.getId(), params);
+
+        } catch (JSONException e) {
+            Log.e("JSON_EXCEPTION", e.getMessage());
+        }
+
+        this.client.newCall(req).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
+
+                    Log.e("REQUEST_FAIL", e.getMessage());
 
                     runOnUiThread(new Runnable() {
                         @Override

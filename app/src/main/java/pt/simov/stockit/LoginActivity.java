@@ -24,6 +24,7 @@ import okhttp3.Response;
 import pt.simov.stockit.core.ApiHandler;
 import pt.simov.stockit.core.domain.AuthToken;
 import pt.simov.stockit.core.http.HttpClient;
+import pt.simov.stockit.warehouse.WarehouseListActivity;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
 

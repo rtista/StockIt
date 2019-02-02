@@ -1,4 +1,4 @@
-package pt.simov.stockit;
+package pt.simov.stockit.warehouse;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import pt.simov.stockit.R;
 import pt.simov.stockit.core.domain.Warehouse;
 
 public class WarehouseListAdapter extends BaseAdapter {

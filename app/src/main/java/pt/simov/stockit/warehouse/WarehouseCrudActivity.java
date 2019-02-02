@@ -1,4 +1,4 @@
-package pt.simov.stockit;
+package pt.simov.stockit.warehouse;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -30,6 +30,7 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import pt.simov.stockit.R;
 import pt.simov.stockit.core.ApiHandler;
 import pt.simov.stockit.core.http.HttpClient;
 
