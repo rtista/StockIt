@@ -195,31 +195,4 @@ public class ItemController {
 
         return request;
     }
-
-    /**
-     * Increments an item's allocated units quantity.
-     *
-     * @param wid The warehouse id.
-     * @param id  The item id.
-     * @return Request The request object to be queued on the request queue.
-     */
-    public Request incrementAllocated(int wid, int id) {
-
-        // Create JSON body
-        JSONObject json = new JSONObject();
-
-        String url = new StringBuilder()
-                .append(ApiHandler.getInstance().getBaseUrl())
-                .append(this.url.replace("{wid}", String.valueOf(wid)))
-                .append("/").append(id).append("/units?unit=allocated").toString();
-
-        // Create request
-        Request request = new Request.Builder()
-                .addHeader("Authorization", this.authorization)
-                .url(url)
-                .post(RequestBody.create(JSON, json.toString()))
-                .build();
-
-        return request;
-    }
 }
