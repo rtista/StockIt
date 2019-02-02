@@ -204,21 +204,6 @@
             android:layout_marginBottom="8dp"
             android:text="Read Barcode"/>
 
-        <!-- Minimum Quantity Label -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Alert Quantity" />
-
-        <EditText
-            android:id="@+id/item_crud_alert"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="number"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:hint="Alert Quantity" />
-
         <!-- Action Button -->
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/item_crud_action"
