@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Stock.It</string>
+    <string name="password">Palavra-Passe</string>
+    <string name="username">Usuário</string>
+    <string name="title_login">Iniciar Sessão</string>
+    <string name="title_signup">Registar</string>
+    <string name="title_warehouses">Inventários</string>
+    <string name="title_view_warehouse">Detalhes do Inventário</string>
+    <string name="title_edit_warehouse">Editar Inventário</string>
+    <string name="title_add_warehouse">Novo Inventário</string>
+    <string name="title_delete_warehouse">Apagar Inventário</string>
+    <string name="title_inventory">Itens</string>
+    <string name="title_view_item">Detalhes do Item</string>
+    <string name="title_edit_item">Editar Item</string>
+    <string name="title_add_item">Novo Item</string>
+    <string name="title_delete_item">Apagar Item</string>
+    <string name="title_activity_barcode_Read">Pesquisa por Código de Barras</string>
+    <string name="title_activity_barcode_Write">Registo de Códigos de Barras</string>
+</resources>
