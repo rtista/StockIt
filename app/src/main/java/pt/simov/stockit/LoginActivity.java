@@ -2,7 +2,9 @@ package pt.simov.stockit;
 
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -38,14 +40,44 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
      */
     private final ApiHandler handler = ApiHandler.getInstance();
 
+    /**
+     * The default shared preferences object.
+     */
+    private SharedPreferences sharedprefs = null;
+
+    /**
+     * On create activity.
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        // Initialization
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // setTitle(R.string.title_login);
+        // Get shared preferences
+        this.sharedprefs = this.getSharedPreferences(
+                "general_prefs_" + String.valueOf(BuildConfig.APPLICATION_ID), MODE_PRIVATE);
 
-        // Auto Login on Token
+        // Check if authentication token is in the shared preferences
+        if (this.sharedprefs.contains("USER_AUTH_TOKEN")
+                && !this.sharedprefs.getString("USER_AUTH_TOKEN", "").isEmpty()) {
+
+            String[] tokensettings = this.sharedprefs.getString("USER_AUTH_TOKEN", "").split(":");
+
+            // Set authentication token
+            this.handler.auth().setAuthToken(
+                    new AuthToken(
+                            tokensettings[0],
+                            tokensettings[1],
+                            Long.parseLong(tokensettings[2])
+                    )
+            );
+        }
+
+        // Auto Login on valid token
         if (!handler.auth().isTokenExpired()) {
 
             try {
@@ -59,6 +91,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         }
 
+        // Register account text view
         TextView tv = findViewById(R.id.link_signup);
         tv.setOnClickListener(new View.OnClickListener() {
             public void onClick(View arg0) {
@@ -71,6 +104,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         });
 
+        // Login button
         Button loginBtn = findViewById(R.id.btn_login);
         loginBtn.setOnClickListener(this);
     }
@@ -117,6 +151,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                                 resp.getInt("expires_on")
                                         )
                                 );
+
+                                // Save token on default app settings
+                                sharedprefs.edit().putString(
+                                        "USER_AUTH_TOKEN",
+                                        new StringBuilder()
+                                                .append(resp.getString("auth_type"))
+                                                .append(":")
+                                                .append(resp.getString("token"))
+                                                .append(":")
+                                                .append(resp.getString("expires_on"))
+                                                .toString()
+                                ).apply();
 
                             } catch (JSONException e) {
                                 Log.e("AUTH_SUCCESS_FAIL", "How is this even possible");
