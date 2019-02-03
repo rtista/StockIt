@@ -4,7 +4,6 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,16 +11,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.io.IOException;
-
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
 import pt.simov.stockit.core.ApiHandler;
 import pt.simov.stockit.core.http.HttpClient;
+import pt.simov.stockit.core.http.StockItCallback;
 
 public class SignupActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -79,67 +75,45 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             Request req = this.apiHandler.user().post(username, password, email);
 
             // Execute the request
-            client.newCall(req).enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
+            client.newCall(req).enqueue(new StockItCallback() {
 
-                    Log.e("ACCOUNT_CREATION_FAIL", "Exception: " + e.getMessage());
-                    Toast.makeText(SignupActivity.this, "Could not connect to the internet." + e.getMessage(), Toast.LENGTH_SHORT).show();
+                // Account Creation Success
+                @Override
+                public void onCreated(JSONObject body) {
+
+                    // Toast user with welcome
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(SignupActivity.this, "Welcome to StockIt", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    // Create Login Activity
+                    try {
+                        Intent i = new Intent(SignupActivity.this, LoginActivity.class);
+                        startActivity(i);
+                        finish();
+                    } catch (ActivityNotFoundException ex) {
+                        Toast.makeText(SignupActivity.this, "Error in Login", Toast.LENGTH_SHORT).show();
+                    }
                 }
 
+                // Internal Server Error
                 @Override
-                public void onResponse(Call call, Response response) {
+                public void onInternalServerError(JSONObject body) {
 
-                    // Login successful
-                    switch (response.code()) {
-
-                        // Successful login
-                        case 201:
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(SignupActivity.this, "Welcome to StockIt", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-
-                            // Create Login Activity
-                            try {
-                                Intent i = new Intent(SignupActivity.this, LoginActivity.class);
-                                startActivity(i);
-                                finish();
-                            } catch (ActivityNotFoundException ex) {
-                                Toast.makeText(SignupActivity.this, "Error in Login", Toast.LENGTH_SHORT).show();
-                            }
-                            break;
-
-                        // Wrong credentials
-                        case 400:
-                            Log.e("ACCOUNT_CREATION_400", "Wrong credentials");
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(SignupActivity.this, "Wrong credentials", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                            break;
-
-                        // Server error (5xx)
-                        default:
-                            Log.e("ACCOUNT_CREATION_500", "Server communication error. Please report at github.");
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(SignupActivity.this, "Server communication error. Please report at github.", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                            break;
-                    }
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(SignupActivity.this, "Server communication error. Please report at github.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             });
 
         } catch (JSONException e) {
-
-            Toast.makeText(SignupActivity.this, "Invalid credentials.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SignupActivity.this, "Missing fields.", Toast.LENGTH_SHORT).show();
         }
     }
 }
