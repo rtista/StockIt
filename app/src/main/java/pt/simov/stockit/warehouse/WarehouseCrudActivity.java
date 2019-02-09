@@ -21,18 +21,16 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.HashMap;
 
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
 import pt.simov.stockit.R;
 import pt.simov.stockit.core.ApiHandler;
 import pt.simov.stockit.core.http.HttpClient;
+import pt.simov.stockit.core.http.StockItCallback;
 
 public class WarehouseCrudActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -461,81 +459,33 @@ public class WarehouseCrudActivity extends AppCompatActivity implements View.OnC
     }
 
     /**
-     * Creates a warehouse via REST API.
+     * Handles al the requests to the REST API.
+     *
      * @param req The request to be made.
      */
     private void handleRequest(Request req) {
 
-        this.client.newCall(req).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
+        this.client.newCall(req).enqueue(new StockItCallback() {
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(WarehouseCrudActivity.this, "Sad life :(", Toast.LENGTH_SHORT).show();
-                    }
-                });
+            // On edit success
+            @Override
+            public void onOk(JSONObject body) {
+                setResult(RESULT_CODE_SUCCESS, WarehouseCrudActivity.this.getIntent());
+                finish();
             }
 
+            // On add success
             @Override
-            public void onResponse(Call call, Response response) {
+            public void onCreated(JSONObject body) {
+                setResult(RESULT_CODE_SUCCESS, WarehouseCrudActivity.this.getIntent());
+                finish();
+            }
 
-                switch (response.code()) {
-
-                    // Success on the request
-                    case 200:
-
-                        setResult(RESULT_CODE_SUCCESS, WarehouseCrudActivity.this.getIntent());
-
-                        // Finish activity
-                        finish();
-
-                        break;
-
-                    // Success on the request
-                    case 201:
-
-                        setResult(RESULT_CODE_SUCCESS, WarehouseCrudActivity.this.getIntent());
-
-                        // Finish activity
-                        finish();
-
-                        break;
-
-                    // Unauthorized
-                    case 401:
-                        // TODO: Refresh user token
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(WarehouseCrudActivity.this, "Unauthorized", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        Log.e("WAREHOUSE_CRUD", "Unauthorized");
-                        break;
-
-                    // Bad Request
-                    case 400:
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(WarehouseCrudActivity.this, "Bad Request", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        Log.e("WAREHOUSE_CRUD", "Bad Request");
-                        break;
-
-                    // Internal Server Error
-                    case 500:
-
-                        setResult(RESULT_CODE_FAILURE, WarehouseCrudActivity.this.getIntent());
-
-                        break;
-
-                    default:
-                        Log.e("WAREHOUSE_CRUD", "Unhandled HTTP status code: " + response.code());
-                }
+            // On failure
+            @Override
+            public void onInternalServerError(JSONObject body) {
+                setResult(RESULT_CODE_FAILURE, WarehouseCrudActivity.this.getIntent());
+                finish();
             }
         });
     }

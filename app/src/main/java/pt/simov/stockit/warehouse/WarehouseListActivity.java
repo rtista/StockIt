@@ -20,19 +20,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
 import pt.simov.stockit.LoginActivity;
 import pt.simov.stockit.R;
 import pt.simov.stockit.core.ApiHandler;
 import pt.simov.stockit.core.domain.Warehouse;
 import pt.simov.stockit.core.http.HttpClient;
+import pt.simov.stockit.core.http.StockItCallback;
 import pt.simov.stockit.item.ItemListActivity;
 
 public class WarehouseListActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
@@ -294,93 +291,45 @@ public class WarehouseListActivity extends AppCompatActivity implements AdapterV
 
         Request req = this.apiHandler.warehouse().get();
 
-        this.client.newCall(req).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
+        this.client.newCall(req).enqueue(new StockItCallback() {
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(WarehouseListActivity.this, "Sad life :(", Toast.LENGTH_SHORT).show();
+            // Success
+            @Override
+            public void onOk(JSONObject body) {
+
+                // Read Json Object from response body
+                try {
+
+                    JSONArray warehouses = body.getJSONArray("warehouses");
+
+                    // Empty Array
+                    WarehouseListActivity.this.feed.clear();
+
+                    // Fill array
+                    for (int i = 0; i < warehouses.length(); i++) {
+
+                        JSONObject wh = warehouses.getJSONObject(i);
+                        WarehouseListActivity.this.feed.add(
+                                new Warehouse(
+                                        wh.getInt("id"),
+                                        wh.getString("name"),
+                                        wh.getString("description"),
+                                        wh.getString("latitude"),
+                                        wh.getString("longitude")
+                                )
+                        );
                     }
-                });
-            }
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-
-                switch (response.code()) {
-
-                    // Success on the request
-                    case 200:
-
-                        // Read Json Object from response body
-                        try {
-
-                            JSONArray warehouses = new JSONObject(response.body().string()).getJSONArray("warehouses");
-
-                            // Empty Array
-                            WarehouseListActivity.this.feed.clear();
-
-                            // Fill array
-                            for (int i = 0; i < warehouses.length(); i++) {
-
-                                JSONObject wh = warehouses.getJSONObject(i);
-                                WarehouseListActivity.this.feed.add(
-                                        new Warehouse(
-                                                wh.getInt("id"),
-                                                wh.getString("name"),
-                                                wh.getString("description"),
-                                                wh.getString("latitude"),
-                                                wh.getString("longitude")
-                                        )
-                                );
-                            }
-
-                            // Update Ui
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    WarehouseListActivity.this.updateDisplay();
-                                }
-                            });
-
-                        } catch (JSONException e) {
-                            Log.e("WAREHOUSE_LIST", "JSON Exception: " + e.getMessage());
+                    // Update Ui
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            WarehouseListActivity.this.updateDisplay();
                         }
+                    });
 
-                        break;
-
-                    // Unauthorized
-                    case 401:
-                        // TODO: Refresh user token
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(WarehouseListActivity.this, "Unauthorized", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        break;
-
-                    // Bad Request
-                    case 400:
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(WarehouseListActivity.this, "Bad Request", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        break;
-
-                    // Internal Server Error
-                    case 500:
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(WarehouseListActivity.this, "Internal Server Error", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        break;
+                } catch (JSONException e) {
+                    Log.e("WAREHOUSE_LIST", "JSON Exception: " + e.getMessage());
                 }
             }
         });
@@ -395,69 +344,20 @@ public class WarehouseListActivity extends AppCompatActivity implements AdapterV
 
         Request req = this.apiHandler.warehouse().delete(id);
 
-        this.client.newCall(req).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
+        this.client.newCall(req).enqueue(new StockItCallback() {
 
+            // Success
+            @Override
+            public void onOk(JSONObject body) {
+
+                // Update Ui
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(WarehouseListActivity.this, "Sad life :(", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(WarehouseListActivity.this, "Warehouse deleted", Toast.LENGTH_SHORT).show();
+                        WarehouseListActivity.this.getWarehouses();
                     }
                 });
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-
-                switch (response.code()) {
-
-                    // Success on the request
-                    case 200:
-
-                        // Update Ui
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(WarehouseListActivity.this, "Warehouse deleted", Toast.LENGTH_SHORT).show();
-                                WarehouseListActivity.this.getWarehouses();
-                            }
-                        });
-
-                        break;
-
-                    // Unauthorized
-                    case 401:
-                        // TODO: Refresh user token
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(WarehouseListActivity.this, "Unauthorized", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        break;
-
-                    // Not Found
-                    case 404:
-
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(WarehouseListActivity.this, "Warehouse Not Found", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        break;
-
-                    // Internal Server Error
-                    case 500:
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(WarehouseListActivity.this, "Internal Server Error", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        break;
-                }
             }
         });
     }
