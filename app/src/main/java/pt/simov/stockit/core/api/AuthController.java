@@ -75,7 +75,7 @@ public class AuthController {
     /**
      * Bearer token authentication.
      *
-     * @return String The authentication token or Null.
+     * @return The request object to be queued.
      */
     public Request bearer(String username, String password) throws JSONException {
 
@@ -89,6 +89,22 @@ public class AuthController {
         Request request = new Request.Builder()
                 .url(ApiHandler.getInstance().getBaseUrl() + this.url)
                 .post(RequestBody.create(JSON, json.toString()))
+                .build();
+
+        return request;
+    }
+
+    /**
+     * Deletes a Bearer authentication token.
+     *
+     * @return The request object to be queued.
+     */
+    public Request bearerDelete() {
+
+        Request request = new Request.Builder()
+                .addHeader("Authorization", this.getAuthorization())
+                .url(ApiHandler.getInstance().getBaseUrl() + this.url)
+                .delete()
                 .build();
 
         return request;
