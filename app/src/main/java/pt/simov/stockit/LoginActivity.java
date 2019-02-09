@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,14 +30,27 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
      * API Handler allows StockIt backend API communication.
      */
     private final ApiHandler handler = ApiHandler.getInstance();
+
     /**
      * HTTP client allows network requests for data.
      */
     private OkHttpClient client = HttpClient.getInstance();
+
     /**
      * The default shared preferences object.
      */
     private SharedPreferences sharedprefs = null;
+
+    /**
+     * The "Remember My Credentials" checkbox.
+     */
+    private CheckBox rememberMeCheckbox;
+
+    /**
+     * Credentials edit texts.
+     */
+    private EditText et_username;
+    private EditText et_password;
 
     /**
      * On create activity.
@@ -50,11 +64,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        // Get layout components
+        this.et_username = findViewById(R.id.input_username);
+        this.et_password = findViewById(R.id.input_password);
+        this.rememberMeCheckbox = findViewById(R.id.remember_me_check);
+
         // Get shared preferences
         this.sharedprefs = this.getSharedPreferences(
                 "general_prefs_" + String.valueOf(BuildConfig.APPLICATION_ID), MODE_PRIVATE);
 
-        // Check if authentication token is in the shared preferences
+        // Check if authentication token is in the shared preferences and login
         if (this.sharedprefs.contains("USER_AUTH_TOKEN")
                 && !this.sharedprefs.getString("USER_AUTH_TOKEN", "").isEmpty()) {
 
@@ -68,19 +87,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             Long.parseLong(tokensettings[2])
                     )
             );
-        }
 
-        // Auto Login on valid token
-        if (!handler.auth().isTokenExpired()) {
+            // Auto Login on valid token
+            if (!this.handler.auth().isTokenExpired()) {
 
-            try {
+                try {
 
-                Intent i = new Intent(LoginActivity.this, WarehouseListActivity.class);
-                startActivity(i);
-                finish();
+                    Intent i = new Intent(LoginActivity.this, WarehouseListActivity.class);
+                    startActivity(i);
+                    finish();
 
-            } catch (ActivityNotFoundException ex) {
-                Toast.makeText(LoginActivity.this, "Error in Login", Toast.LENGTH_SHORT).show();
+                } catch (ActivityNotFoundException ex) {
+                    Toast.makeText(LoginActivity.this, "Error in Login", Toast.LENGTH_SHORT).show();
+                }
             }
         }
 
@@ -100,6 +119,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         // Login button
         Button loginBtn = findViewById(R.id.btn_login);
         loginBtn.setOnClickListener(this);
+
+        // Check if user credentials are on the shared preferences and login
+        if (this.sharedprefs.contains("USER_CREDENTIALS")
+                && !this.sharedprefs.getString("USER_CREDENTIALS", "").isEmpty()) {
+
+            // Set checkbox checked
+            this.rememberMeCheckbox.setChecked(true);
+
+            // Get credentials from shared preferences
+            String[] credentials = this.sharedprefs
+                    .getString("USER_CREDENTIALS", "").split(":");
+
+            // Set values on fields
+            this.et_username.setText(credentials[0]);
+            this.et_password.setText(credentials[1]);
+        }
     }
 
     /**
@@ -110,8 +145,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
 
-        String username = ((EditText) findViewById(R.id.input_username)).getText().toString();
-        String password = ((EditText) findViewById(R.id.input_password)).getText().toString();
+        final String username = this.et_username.getText().toString();
+        final String password = this.et_password.getText().toString();
 
         try {
             Request req = handler.auth().bearer(username, password);
@@ -144,6 +179,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     } catch (JSONException e) {
 
                         Log.e("AUTH_SUCCESS_FAIL", "JSON Exception: " + e.getMessage());
+                    }
+
+                    // Save credentials in shared preferences on allow
+                    if (LoginActivity.this.rememberMeCheckbox.isChecked()) {
+
+                        // Save token on default app settings
+                        sharedprefs.edit().putString(
+                                "USER_CREDENTIALS",
+                                new StringBuilder().append(username)
+                                        .append(":").append(password).toString()
+                        ).apply();
+
+                    } else {
+
+                        sharedprefs.edit().remove("USER_CREDENTIALS").apply();
                     }
 
                     // Toast user with welcome
