@@ -6,7 +6,6 @@ import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
@@ -20,21 +19,18 @@ import com.journeyapps.barcodescanner.DefaultDecoderFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
 import pt.simov.stockit.R;
 import pt.simov.stockit.core.ApiHandler;
 import pt.simov.stockit.core.domain.Item;
 import pt.simov.stockit.core.http.HttpClient;
+import pt.simov.stockit.core.http.StockItCallback;
 
 public class BarcodeActivity extends AppCompatActivity implements BarcodeCallback {
 
@@ -64,10 +60,21 @@ public class BarcodeActivity extends AppCompatActivity implements BarcodeCallbac
      */
     private int wid;
 
+    /**
+     * The barcode reader view.
+     */
     private DecoratedBarcodeView barcodeView;
-    private BeepManager beepManager;
-    private TextView lastValue;
 
+    /**
+     * The beep manager allows playing beeps on events.
+     */
+    private BeepManager beepManager;
+
+    /**
+     * On activity creation.
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,8 +93,6 @@ public class BarcodeActivity extends AppCompatActivity implements BarcodeCallbac
                 setTitle(R.string.title_activity_barcode_Write);
         }
 
-        // lastValue = findViewById(R.id.lastValue);
-
         barcodeView = findViewById(R.id.barcode_scanner);
         Collection<BarcodeFormat> formats = Arrays.asList(BarcodeFormat.CODE_39);
         barcodeView.getBarcodeView().setDecoderFactory(new DefaultDecoderFactory(formats));
@@ -102,8 +107,8 @@ public class BarcodeActivity extends AppCompatActivity implements BarcodeCallbac
      */
     @Override
     protected void onResume() {
-        super.onResume();
 
+        super.onResume();
         barcodeView.resume();
     }
 
@@ -112,8 +117,8 @@ public class BarcodeActivity extends AppCompatActivity implements BarcodeCallbac
      */
     @Override
     protected void onPause() {
-        super.onPause();
 
+        super.onPause();
         barcodeView.pause();
     }
 
@@ -133,12 +138,6 @@ public class BarcodeActivity extends AppCompatActivity implements BarcodeCallbac
 
         // Read barcode
         String barcode = result.getText();
-
-        // Compare against last read value
-        if (barcode == null || barcode.equals(lastValue)) {
-            // Prevent duplicate scans
-            return;
-        }
 
         // Find item by barcode
         this.getItemByBarcode(barcode);
@@ -160,151 +159,110 @@ public class BarcodeActivity extends AppCompatActivity implements BarcodeCallbac
 
         Request req = this.apiHandler.item().get(this.wid, barcode);
 
-        this.client.newCall(req).enqueue(new Callback() {
-
+        this.client.newCall(req).enqueue(new StockItCallback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onOk(JSONObject body) {
+
+                // Read Json Object from response body
+                try {
+
+                    JSONObject it = body.getJSONArray("items").getJSONObject(0);
+
+                    Item item = new Item(
+                            it.getInt("id"),
+                            it.getString("name"),
+                            it.getString("description"),
+                            it.getString("barcode"),
+                            it.getInt("available"),
+                            it.getInt("allocated"),
+                            it.getInt("alert")
+                    );
+
+                    // Take Action based on activity result
+                    switch (BarcodeActivity.this.requestCode) {
+
+                        // On Read Mode - Open View Item Activity
+                        case BarcodeActivity.REQUEST_CODE_READ:
+
+                            Intent iViewItem = new Intent(BarcodeActivity.this, ItemCrudActivity.class);
+
+                            iViewItem.putExtra("WAREHOUSE_ID", wid);
+                            iViewItem.putExtra("NAME", item.getName());
+                            iViewItem.putExtra("DESCRIPTION", item.getDescription());
+                            iViewItem.putExtra("BARCODE", item.getBarcode());
+                            iViewItem.putExtra("AVAILABLE", item.getAvailable());
+                            iViewItem.putExtra("ALLOCATED", item.getAllocated());
+                            iViewItem.putExtra("ALERT", item.getAlert());
+
+                            iViewItem.putExtra("REQUEST_CODE", ItemCrudActivity.REQUEST_CODE_VIEW);
+                            startActivityForResult(iViewItem, ItemCrudActivity.REQUEST_CODE_VIEW);
+
+                            break;
+
+                        // On Write Mode - Increment Item Quantity
+                        case BarcodeActivity.REQUEST_CODE_WRITE:
+                            increment(item);
+                            break;
+
+                        default:
+                            break;
+                    }
+
+                } catch (JSONException e) {
+                    Log.e("Find_Item", "JSON Exception: " + e.getMessage());
+                }
+
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(BarcodeActivity.this, "API connection error.", Toast.LENGTH_SHORT).show();
+                        BarcodeActivity.this.barcodeView.resume();
                     }
                 });
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onUnauthorized(JSONObject body) {
 
-                // Success on the request
-                switch (response.code()) {
-                    case 200:
-                        // Read Json Object from response body
-                        try {
+                // TODO: Refresh user token
+            }
 
-                            JSONObject it = new JSONObject(response.body().string())
-                                    .getJSONArray("items").getJSONObject(0);
+            @Override
+            public void onNotFound(JSONObject body) {
 
-                            Item item = new Item(
-                                    it.getInt("id"),
-                                    it.getString("name"),
-                                    it.getString("description"),
-                                    it.getString("barcode"),
-                                    it.getInt("available"),
-                                    it.getInt("allocated"),
-                                    it.getInt("alert")
-                            );
+                // Take Action based on activity result
+                switch (BarcodeActivity.this.requestCode) {
 
-                            Log.e("ITEM_DEBUG", "Item Barcode: " + item.getBarcode());
+                    // On Read Mode - Ignore
+                    case BarcodeActivity.REQUEST_CODE_READ:
 
-                            // Take Action based on activity result
-                            switch (BarcodeActivity.this.requestCode) {
-
-                                // On Read Mode - Open View Item Activity
-                                case BarcodeActivity.REQUEST_CODE_READ:
-
-                                    Intent iViewItem = new Intent(getApplicationContext(), ItemCrudActivity.class);
-
-                                    iViewItem.putExtra("WAREHOUSE_ID", wid);
-                                    iViewItem.putExtra("NAME", item.getName());
-                                    iViewItem.putExtra("DESCRIPTION", item.getDescription());
-                                    iViewItem.putExtra("BARCODE", item.getBarcode());
-                                    iViewItem.putExtra("AVAILABLE", item.getAvailable());
-                                    iViewItem.putExtra("ALLOCATED", item.getAllocated());
-                                    iViewItem.putExtra("ALERT", item.getAlert());
-
-                                    iViewItem.putExtra("REQUEST_CODE", ItemCrudActivity.REQUEST_CODE_VIEW);
-                                    startActivityForResult(iViewItem, ItemCrudActivity.REQUEST_CODE_VIEW);
-
-                                    break;
-
-                                // On Write Mode - Increment Item Quantity
-                                case BarcodeActivity.REQUEST_CODE_WRITE:
-                                    increment(item);
-                                    break;
-
-                                default:
-                                    break;
-                            }
-
-                        } catch (JSONException e) {
-                            Log.e("Find_Item", "JSON Exception: " + e.getMessage());
-                        }
-
-                        break;
-                    // Unauthorized
-                    case 401:
-                        // TODO: Refresh user token
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(BarcodeActivity.this, "Unauthorized", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(BarcodeActivity.this, "Barcode Not Found.", Toast.LENGTH_SHORT).show();
                             }
                         });
                         break;
 
-                    // Bad Request
-                    case 400:
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(BarcodeActivity.this, "Bad Request", Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                    // On Write Mode - Create Item
+                    case BarcodeActivity.REQUEST_CODE_WRITE:
+
+                        Intent iAddItem = new Intent(BarcodeActivity.this, ItemCrudActivity.class);
+
+                        iAddItem.putExtra("WAREHOUSE_ID", wid);
+                        iAddItem.putExtra("BARCODE", barcode);
+                        iAddItem.putExtra("REQUEST_CODE", ItemCrudActivity.REQUEST_CODE_ADD);
+
+                        startActivityForResult(iAddItem, ItemCrudActivity.REQUEST_CODE_ADD);
                         break;
 
-                    // Not Found
-                    case 404:
-
-                        Log.e("ITEM_DEBUG", "Request Code: " + BarcodeActivity.this.requestCode);
-
-                        // Take Action based on activity result
-                        switch (BarcodeActivity.this.requestCode) {
-
-                            // On Read Mode - Ignore
-                            case BarcodeActivity.REQUEST_CODE_READ:
-
-                                Log.e("ITEM_DEBUG", "Nao encontrei essa cena oh mano");
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Toast.makeText(BarcodeActivity.this, "Barcode Not Found.", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                                break;
-
-                            // On Write Mode - Create Item
-                            case BarcodeActivity.REQUEST_CODE_WRITE:
-
-                                Intent iAddItem = new Intent(BarcodeActivity.this, ItemCrudActivity.class);
-
-                                iAddItem.putExtra("WAREHOUSE_ID", wid);
-                                iAddItem.putExtra("BARCODE", barcode);
-                                iAddItem.putExtra("REQUEST_CODE", ItemCrudActivity.REQUEST_CODE_ADD);
-
-                                startActivityForResult(iAddItem, ItemCrudActivity.REQUEST_CODE_ADD);
-                                break;
-
-                            default:
-                                break;
-                        }
-                        break;
-
-                    // Internal Server Error
-                    case 500:
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(BarcodeActivity.this, "Internal Server Error", Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                    default:
                         break;
                 }
 
-                // Resume barcode reading
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        barcodeView.resume();
+                        BarcodeActivity.this.barcodeView.resume();
                     }
                 });
             }
@@ -331,88 +289,25 @@ public class BarcodeActivity extends AppCompatActivity implements BarcodeCallbac
             Log.e("JSON_EXCEPTION", e.getMessage());
         }
 
-        this.client.newCall(req).enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
+        this.client.newCall(req).enqueue(new StockItCallback() {
+            @Override
+            public void onOk(JSONObject body) {
 
-                    Log.e("REQUEST_FAIL", e.getMessage());
-
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(BarcodeActivity.this, "API connection error.", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-
-                @Override
-                public void onResponse(Call call, Response response) {
-
-                    switch (response.code()) {
-
-                        // Success on the request
-                        case 200:
-
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(BarcodeActivity.this, "1 Unit Added", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-
-                            break;
-
-                        // Success on the request
-                        case 201:
-
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(BarcodeActivity.this, "1 Unit Added", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-
-                            break;
-
-                        // Unauthorized
-                        case 401:
-                            // TODO: Refresh user token
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(BarcodeActivity.this, "Unauthorized", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                            Log.e("BarcodeActivity", "Unauthorized");
-                            break;
-
-                        // Bad Request
-                        case 400:
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(BarcodeActivity.this, "Bad Request", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                            Log.e("BarcodeActivity", "Bad Request");
-                            break;
-
-                        // Internal Server Error
-                        case 500:
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Toast.makeText(BarcodeActivity.this, "Internal Server Error", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                            Log.e("BarcodeActivity", "Internal Server Error");
-                            break;
-
-                        default:
-                            Log.e("BarcodeActivity", "Unhandled HTTP status code: " + response.code());
+                // Toast user with success
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(BarcodeActivity.this, "1 Unit Added", Toast.LENGTH_SHORT).show();
                     }
-                }
-            });
+                });
+            }
+
+            @Override
+            public void onUnauthorized(JSONObject body) {
+
+                // TODO: Refresh user token
+            }
+        });
     }
 
     /**

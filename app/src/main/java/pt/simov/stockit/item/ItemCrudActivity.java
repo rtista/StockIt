@@ -15,18 +15,16 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.HashMap;
 
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
 import pt.simov.stockit.R;
 import pt.simov.stockit.core.ApiHandler;
 import pt.simov.stockit.core.http.HttpClient;
+import pt.simov.stockit.core.http.StockItCallback;
 
 public class ItemCrudActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -277,6 +275,7 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
             case REQUEST_CODE_VIEW:
 
                 // Finish activity
+                setResult(ItemCrudActivity.RESULT_CODE_SUCCESS);
                 finish();
                 break;
 
@@ -408,97 +407,69 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
      */
     private void handleRequest(Request req) {
 
-        this.client.newCall(req).enqueue(new Callback() {
+        this.client.newCall(req).enqueue(new StockItCallback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onOk(JSONObject body) {
 
-                Log.e("REQUEST_FAIL", e.getMessage());
+                // Set successful result
+                setResult(RESULT_CODE_SUCCESS, ItemCrudActivity.this.getIntent());
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(ItemCrudActivity.this, "Sad life :(", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                // Finish activity
+                finish();
             }
 
             @Override
-            public void onResponse(Call call, Response response) {
+            public void onCreated(JSONObject body) {
 
-                switch (response.code()) {
+                // Set successful result
+                setResult(RESULT_CODE_SUCCESS, ItemCrudActivity.this.getIntent());
 
-                    // Success on the request
-                    case 200:
+                // Finish activity
+                finish();
+            }
 
-                        Log.e("ITEM_CRUD", "im success");
+            @Override
+            public void onUnauthorized(JSONObject body) {
 
-                        setResult(RESULT_CODE_SUCCESS, ItemCrudActivity.this.getIntent());
+                // TODO: Refresh user token
+                finish();
+            }
 
-                        // Finish activity
-                        finish();
+            @Override
+            public void onInternalServerError(JSONObject body) {
 
-                        break;
+                // Set error result code
+                setResult(RESULT_CODE_FAILURE, ItemCrudActivity.this.getIntent());
 
-                    // Success on the request
-                    case 201:
-
-                        Log.e("ITEM_CRUD", "im successs 201");
-
-                        setResult(RESULT_CODE_SUCCESS, ItemCrudActivity.this.getIntent());
-
-                        // Finish activity
-                        finish();
-
-                        break;
-
-                    // Unauthorized
-                    case 401:
-                        // TODO: Refresh user token
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(ItemCrudActivity.this, "Unauthorized", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        Log.e("ITEM_CRUD", "Unauthorized");
-                        break;
-
-                    // Bad Request
-                    case 400:
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(ItemCrudActivity.this, "Bad Request", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        Log.e("ITEM_CRUD", "Bad Request");
-                        break;
-
-                    // Internal Server Error
-                    case 500:
-
-                        setResult(RESULT_CODE_FAILURE, ItemCrudActivity.this.getIntent());
-
-                        Log.e("ITEM_CRUD", "im 500");
-                        break;
-
-                    default:
-                        Log.e("ITEM_CRUD", "Unhandled HTTP status code: " + response.code());
-                        break;
-                }
+                // Finish activity
+                finish();
             }
         });
     }
 
+    /**
+     * On result of the barcode reading activity.
+     *
+     * @param requestCode The activity's request code.
+     * @param resultCode  The activity's result code.
+     * @param data        The intent data.
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+
         if(result != null) {
+
             if(result.getContents() == null) {
+
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
+
             } else {
+
                 this.barcode_et.setText(result.getContents());
             }
+
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }

@@ -19,18 +19,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
 import pt.simov.stockit.R;
 import pt.simov.stockit.core.ApiHandler;
 import pt.simov.stockit.core.domain.Item;
 import pt.simov.stockit.core.http.HttpClient;
+import pt.simov.stockit.core.http.StockItCallback;
 
 public class ItemListActivity extends AppCompatActivity {
 
@@ -313,96 +310,53 @@ public class ItemListActivity extends AppCompatActivity {
 
         Request req = this.apiHandler.item().get(this.wid);
 
-        this.client.newCall(req).enqueue(new Callback() {
+        this.client.newCall(req).enqueue(new StockItCallback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onOk(JSONObject body) {
 
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(ItemListActivity.this, "Sad life :(", Toast.LENGTH_SHORT).show();
+
+                // Read Json Object from response body
+                try {
+
+                    JSONArray items = body.getJSONArray("items");
+
+                    // Empty Array
+                    ItemListActivity.this.feed.clear();
+
+                    // Fill array
+                    for (int i = 0; i < items.length(); i++) {
+
+                        JSONObject it = items.getJSONObject(i);
+                        ItemListActivity.this.feed.add(
+                                new Item(
+                                        it.getInt("id"),
+                                        it.getString("name"),
+                                        it.getString("description"),
+                                        it.getString("barcode"),
+                                        it.getInt("available"),
+                                        it.getInt("allocated"),
+                                        it.getInt("alert")
+                                )
+                        );
                     }
-                });
+
+                    // Update Ui
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ItemListActivity.this.updateDisplay();
+                        }
+                    });
+
+                } catch (JSONException e) {
+                    Log.e("ITEM_LIST", "JSON Exception: " + e.getMessage());
+                }
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onUnauthorized(JSONObject body) {
 
-                switch (response.code()) {
-
-                    // Success on the request
-                    case 200:
-
-                        // Read Json Object from response body
-                        try {
-
-                            JSONArray items = new JSONObject(response.body().string()).getJSONArray("items");
-
-                            // Empty Array
-                            ItemListActivity.this.feed.clear();
-
-                            // Fill array
-                            for (int i = 0; i < items.length(); i++) {
-
-                                JSONObject it = items.getJSONObject(i);
-                                ItemListActivity.this.feed.add(
-                                        new Item(
-                                                it.getInt("id"),
-                                                it.getString("name"),
-                                                it.getString("description"),
-                                                it.getString("barcode"),
-                                                it.getInt("available"),
-                                                it.getInt("allocated"),
-                                                it.getInt("alert")
-                                        )
-                                );
-                            }
-
-                            // Update Ui
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    ItemListActivity.this.updateDisplay();
-                                }
-                            });
-
-                        } catch (JSONException e) {
-                            Log.e("ITEM_LIST", "JSON Exception: " + e.getMessage());
-                        }
-
-                        break;
-
-                    // Unauthorized
-                    case 401:
-                        // TODO: Refresh user token
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(ItemListActivity.this, "Unauthorized", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        break;
-
-                    // Bad Request
-                    case 400:
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(ItemListActivity.this, "Bad Request", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        break;
-
-                    // Internal Server Error
-                    case 500:
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(ItemListActivity.this, "Internal Server Error", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        break;
-                }
+                // TODO: Refresh user token
             }
         });
     }
@@ -416,69 +370,24 @@ public class ItemListActivity extends AppCompatActivity {
 
         Request req = this.apiHandler.item().delete(this.wid, id);
 
-        this.client.newCall(req).enqueue(new Callback() {
+        this.client.newCall(req).enqueue(new StockItCallback() {
             @Override
-            public void onFailure(Call call, IOException e) {
+            public void onOk(JSONObject body) {
 
+                // Update Ui
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(ItemListActivity.this, "Sad life :(", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ItemListActivity.this, "Item deleted", Toast.LENGTH_SHORT).show();
+                        ItemListActivity.this.getItems();
                     }
                 });
             }
 
             @Override
-            public void onResponse(Call call, Response response) throws IOException {
+            public void onUnauthorized(JSONObject body) {
 
-                switch (response.code()) {
-
-                    // Success on the request
-                    case 200:
-
-                        // Update Ui
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(ItemListActivity.this, "Item deleted", Toast.LENGTH_SHORT).show();
-                                ItemListActivity.this.getItems();
-                            }
-                        });
-
-                        break;
-
-                    // Unauthorized
-                    case 401:
-                        // TODO: Refresh user token
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(ItemListActivity.this, "Unauthorized", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        break;
-
-                    // Not Found
-                    case 404:
-
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(ItemListActivity.this, "Item Not Found", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        break;
-
-                    // Internal Server Error
-                    case 500:
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(ItemListActivity.this, "Internal Server Error", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                        break;
-                }
+                // TODO: Refresh user token
             }
         });
     }
