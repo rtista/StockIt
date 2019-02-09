@@ -3,6 +3,8 @@
     <string name="app_name">Stock.It</string>
     <string name="password">Palavra-Passe</string>
     <string name="username">Usuário</string>
+    <string name="signup_link">Ainda não tem conta? Crie uma agora!</string>
+    <string name="remember_me">Guardar as minhas credenciais</string>
     <string name="title_login">Iniciar Sessão</string>
     <string name="title_signup">Registar</string>
     <string name="title_warehouses">Inventários</string>

@@ -17,34 +17,56 @@
 
         <ImageView android:src="@drawable/logo"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
+            android:layout_height="wrap_content" />
 
         <TextView android:id="@+id/logoText"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:text="Stock.It"
+            android:text="@string/app_name"
             android:gravity="center"
             android:textSize="50dp"/>
 
         <!-- Username Label -->
-            <EditText android:id="@+id/input_username"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:hint="@string/username" />
-        <!-- Password Label -->
-            <EditText android:id="@+id/input_password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPassword"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:hint="@string/password"/>
+        <EditText
+            android:id="@+id/input_username"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:hint="@string/username" />
 
+        <!-- Password Label -->
+        <EditText
+            android:id="@+id/input_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:hint="@string/password" />
+
+        <!-- Remember Me Check -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="4dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="16dip"
+                android:text="@string/remember_me" />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/remember_me_check" />
+        </LinearLayout>
+
+        <!-- Login Button -->
         <android.support.v7.widget.AppCompatButton
             android:id="@+id/btn_login"
             android:layout_width="fill_parent"
@@ -54,13 +76,13 @@
             android:padding="12dp"
             android:text="Login"/>
 
+        <!-- Sign Up Link -->
         <TextView android:id="@+id/link_signup"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
-            android:text="No account yet? Create one"
+            android:text="@string/signup_link"
             android:gravity="center"
             android:textSize="16dip"/>
-
     </LinearLayout>
 </ScrollView>

@@ -1,9 +1,11 @@
 <resources>
     <string name="app_name">Stock.It</string>
-    <string name="password">Password</string>
-    <string name="username">Username</string>
     <string name="title_login">Stock.It - Login</string>
     <string name="title_signup">Stock.It - Sign Up</string>
+    <string name="password">Password</string>
+    <string name="username">Username</string>
+    <string name="signup_link">No account yet? Create one</string>
+    <string name="remember_me">Remember My Credentials</string>
     <string name="title_warehouses">Stock.It - Manage Warehouses</string>
     <string name="title_view_warehouse">Stock.It - View Warehouse</string>
     <string name="title_edit_warehouse">Stock.It - Edit Warehouse</string>
@@ -16,5 +18,4 @@
     <string name="title_delete_item">Stock.It - Delete Item</string>
     <string name="title_activity_barcode_Read">Stock.It - Barcode Search</string>
     <string name="title_activity_barcode_Write">Stock.It - Barcode Write</string>
-
 </resources>
