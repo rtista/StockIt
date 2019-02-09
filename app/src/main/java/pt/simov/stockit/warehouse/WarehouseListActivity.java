@@ -2,6 +2,7 @@ package pt.simov.stockit.warehouse;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import pt.simov.stockit.BuildConfig;
 import pt.simov.stockit.LoginActivity;
 import pt.simov.stockit.R;
 import pt.simov.stockit.core.ApiHandler;
@@ -129,10 +131,10 @@ public class WarehouseListActivity extends AppCompatActivity implements AdapterV
                 break;
 
             case R.id.wom_logout:
-                i = new Intent(this, LoginActivity.class);
-                //TODO Logout operation
-                startActivity(i);
-                finish();
+
+                // Delete user token
+                this.logout();
+
                 break;
 
             default:
@@ -358,6 +360,32 @@ public class WarehouseListActivity extends AppCompatActivity implements AdapterV
                         WarehouseListActivity.this.getWarehouses();
                     }
                 });
+            }
+        });
+    }
+
+    /**
+     * Logs the user out of the application.
+     * Deletes user token from both server and shared preferences.
+     */
+    private void logout() {
+
+        Request req = this.apiHandler.auth().bearerDelete();
+
+        this.client.newCall(req).enqueue(new StockItCallback() {
+            @Override
+            public void onOk(JSONObject body) {
+
+                // Get shared preferences
+                SharedPreferences sharedprefs = WarehouseListActivity.this.getSharedPreferences(
+                        "general_prefs_" + String.valueOf(BuildConfig.APPLICATION_ID), MODE_PRIVATE);
+
+                // Remove token and credentials from shared preferences
+                sharedprefs.edit().remove("USER_AUTH_TOKEN").commit();
+
+                // Send user to login activity
+                Intent i = new Intent(WarehouseListActivity.this, LoginActivity.class);
+                startActivity(i);
             }
         });
     }
