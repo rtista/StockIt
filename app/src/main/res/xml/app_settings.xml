@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <android.support.v7.preference.SwitchPreferenceCompat
+        android:key="notifications"
+        android:title="Enable Push Notifications"
+        android:summary="Enable push notifications for low quantity alerts."
+        android:defaultValue="true" />
+
+    <android.support.v7.preference.EditTextPreference
+        android:key="api-location"
+        android:title="API Location"
+        android:summary="The IP address or hostname and port of the Stock.It API."
+        android:dialogMessage="API Location"
+        android:defaultValue="127.0.0.1:8000/api" />
+
+</android.support.v7.preference.PreferenceScreen>

@@ -4,6 +4,8 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,6 +20,7 @@ import okhttp3.Request;
 import pt.simov.stockit.core.ApiHandler;
 import pt.simov.stockit.core.http.HttpClient;
 import pt.simov.stockit.core.http.StockItCallback;
+import pt.simov.stockit.settings.SettingsActivity;
 
 public class SignupActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -57,6 +60,46 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
 
         Button signupBtn = findViewById(R.id.btn_signup);
         signupBtn.setOnClickListener(this);
+    }
+
+    /**
+     * Inflate the options menu.
+     *
+     * @param menu Options menu.
+     * @return boolean
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.login_signup_options, menu);
+        return true;
+    }
+
+    /**
+     * On Option Menu item selection.
+     *
+     * @param item The selected item.
+     * @return boolean
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        // Handle item selection
+        switch (item.getItemId()) {
+
+            // On Add warehouse option
+            case R.id.lom_settings:
+
+                // Start settings activity
+                Intent i = new Intent(this, SettingsActivity.class);
+                startActivity(i);
+
+                break;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+        return true;
     }
 
     /**
@@ -116,4 +159,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             Toast.makeText(SignupActivity.this, "Missing fields.", Toast.LENGTH_SHORT).show();
         }
     }
+
+
 }

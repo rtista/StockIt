@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -22,6 +24,7 @@ import pt.simov.stockit.core.ApiHandler;
 import pt.simov.stockit.core.domain.AuthToken;
 import pt.simov.stockit.core.http.HttpClient;
 import pt.simov.stockit.core.http.StockItCallback;
+import pt.simov.stockit.settings.SettingsActivity;
 import pt.simov.stockit.warehouse.WarehouseListActivity;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
@@ -138,6 +141,46 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     /**
+     * Inflate the options menu.
+     *
+     * @param menu Options menu.
+     * @return boolean
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.login_signup_options, menu);
+        return true;
+    }
+
+    /**
+     * On Option Menu item selection.
+     *
+     * @param item The selected item.
+     * @return boolean
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        // Handle item selection
+        switch (item.getItemId()) {
+
+            // On Add warehouse option
+            case R.id.lom_settings:
+
+                // Start settings activity
+                Intent i = new Intent(this, SettingsActivity.class);
+                startActivity(i);
+
+                break;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+        return true;
+    }
+
+    /**
      * Login button on click listener.
      *
      * @param v The view.
@@ -169,7 +212,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 new AuthToken(type, token, expiration)
                         );
 
-                        // Save token on default app settings
+                        // Save token on default app app_settings
                         sharedprefs.edit().putString(
                                 "USER_AUTH_TOKEN",
                                 new StringBuilder().append(type).append(":").append(token)
@@ -184,7 +227,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     // Save credentials in shared preferences on allow
                     if (LoginActivity.this.rememberMeCheckbox.isChecked()) {
 
-                        // Save token on default app settings
+                        // Save token on default app app_settings
                         sharedprefs.edit().putString(
                                 "USER_CREDENTIALS",
                                 new StringBuilder().append(username)
