@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -66,6 +67,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         // Initialization
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        // Read API Location from Settings
+        String location = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString("api-location", "127.0.0.1:8000");
+
+        // Initialize API Handler URL
+        ApiHandler.setBaseUrl("http", location);
 
         // Get layout components
         this.et_username = findViewById(R.id.input_username);

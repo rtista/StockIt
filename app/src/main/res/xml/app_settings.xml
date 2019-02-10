@@ -13,6 +13,6 @@
         android:title="API Location"
         android:summary="The IP address or hostname and port of the Stock.It API."
         android:dialogMessage="API Location"
-        android:defaultValue="127.0.0.1:8000/api" />
+        android:defaultValue="127.0.0.1:8000" />
 
 </android.support.v7.preference.PreferenceScreen>

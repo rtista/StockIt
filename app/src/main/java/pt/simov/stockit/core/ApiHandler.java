@@ -14,9 +14,8 @@ public class ApiHandler {
 
     /**
      * The API URL location.
-     * Todo: Make this config changeable
      */
-    private final String url = "http://192.168.1.7:8000/api";
+    private String url;
 
     /**
      * The handler's item controller.
@@ -58,6 +57,21 @@ public class ApiHandler {
     public String getBaseUrl() {
 
         return instance.url;
+    }
+
+    /**
+     * Sets the API location.
+     *
+     * @param scheme   The scheme.
+     * @param location The IP address or hostname is listening.
+     * @return ApiHandler
+     */
+    public static void setBaseUrl(String scheme, String location) {
+
+        instance.url = new StringBuilder()
+                .append(scheme).append("://")
+                .append(location).append("/api")
+                .toString();
     }
 
     /**
