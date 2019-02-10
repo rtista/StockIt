@@ -225,7 +225,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 "USER_AUTH_TOKEN",
                                 new StringBuilder().append(type).append(":").append(token)
                                         .append(":").append(expiration).toString()
-                        ).apply();
+                        ).commit();
 
                     } catch (JSONException e) {
 

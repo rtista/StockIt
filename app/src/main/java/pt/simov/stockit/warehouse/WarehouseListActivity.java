@@ -71,10 +71,9 @@ public class WarehouseListActivity extends AppCompatActivity implements AdapterV
         setContentView(R.layout.activity_warehouse_list);
         setTitle(R.string.title_warehouses);
 
-
         // Text View
         TextView tv = findViewById(R.id.warehouses_title);
-        tv.setText("Warehouses of @User");
+        tv.setText("Your Warehouses");
 
         // Update display
         this.lv = findViewById(R.id.warehouses_list);
@@ -93,7 +92,7 @@ public class WarehouseListActivity extends AppCompatActivity implements AdapterV
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.warehouses_optionsmenu, menu);
+        getMenuInflater().inflate(R.menu.warehouses_list_options, menu);
         return true;
     }
 
@@ -106,7 +105,7 @@ public class WarehouseListActivity extends AppCompatActivity implements AdapterV
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        getMenuInflater().inflate(R.menu.warehouses_contextmenu, menu);
+        getMenuInflater().inflate(R.menu.warehouses_list_context, menu);
     }
 
     /**
@@ -334,6 +333,13 @@ public class WarehouseListActivity extends AppCompatActivity implements AdapterV
                     Log.e("WAREHOUSE_LIST", "JSON Exception: " + e.getMessage());
                 }
             }
+
+            // No authentication token
+            @Override
+            public void onUnauthorized(JSONObject body) {
+
+                // TODO: Refresh user token
+            }
         });
     }
 
@@ -376,6 +382,9 @@ public class WarehouseListActivity extends AppCompatActivity implements AdapterV
             @Override
             public void onOk(JSONObject body) {
 
+                // Remove token from the in-memory api handler
+                WarehouseListActivity.this.apiHandler.auth().setAuthToken(null);
+
                 // Get shared preferences
                 SharedPreferences sharedprefs = WarehouseListActivity.this.getSharedPreferences(
                         "general_prefs_" + String.valueOf(BuildConfig.APPLICATION_ID), MODE_PRIVATE);
@@ -386,6 +395,13 @@ public class WarehouseListActivity extends AppCompatActivity implements AdapterV
                 // Send user to login activity
                 Intent i = new Intent(WarehouseListActivity.this, LoginActivity.class);
                 startActivity(i);
+            }
+
+            @Override
+            public void onUnauthorized(JSONObject body) {
+
+                // Same behaviour applies to unauthorized
+                onOk(body);
             }
         });
     }
