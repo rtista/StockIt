@@ -106,7 +106,7 @@ public class ItemListActivity extends AppCompatActivity {
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.inventory_optionsmenu, menu);
+        getMenuInflater().inflate(R.menu.item_list_options, menu);
         return true;
     }
 
@@ -120,7 +120,7 @@ public class ItemListActivity extends AppCompatActivity {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        getMenuInflater().inflate(R.menu.inventory_contextmenu, menu);
+        getMenuInflater().inflate(R.menu.item_list_context, menu);
     }
 
     /**
