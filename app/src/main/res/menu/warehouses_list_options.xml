@@ -2,8 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/wom_add"
-        android:title="Add Warehouse"/>
+        android:title="@string/wom_add" />
+    <item
+        android:id="@+id/wom_export"
+        android:title="@string/wom_export" />
     <item
         android:id="@+id/wom_logout"
-        android:title="Logout"/>
+        android:title="@string/wom_logout" />
 </menu>

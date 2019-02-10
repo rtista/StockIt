@@ -1,21 +1,73 @@
 <resources>
+    <!-- General -->
     <string name="app_name">Stock.It</string>
-    <string name="title_login">Stock.It - Login</string>
-    <string name="title_signup">Stock.It - Sign Up</string>
-    <string name="password">Password</string>
+
+    <!-- Sign Up and Login and Options Menu -->
+    <string name="title_signup">Sign Up</string>
+    <string name="title_login">Login</string>
     <string name="username">Username</string>
-    <string name="signup_link">No account yet? Create one</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="login_link">Already a member? Login!</string>
+    <string name="signup_link">No account yet? Create one!</string>
     <string name="remember_me">Remember My Credentials</string>
-    <string name="title_warehouses">Stock.It - Manage Warehouses</string>
-    <string name="title_view_warehouse">Stock.It - View Warehouse</string>
-    <string name="title_edit_warehouse">Stock.It - Edit Warehouse</string>
-    <string name="title_add_warehouse">Stock.It - Add Warehouse</string>
-    <string name="title_delete_warehouse">Stock.It - Delete Warehouse</string>
-    <string name="title_inventory">Stock.It - Manage Inventory</string>
-    <string name="title_view_item">Stock.It - View Item</string>
-    <string name="title_edit_item">Stock.It - Edit Item</string>
-    <string name="title_add_item">Stock.It - Add Item</string>
-    <string name="title_delete_item">Stock.It - Delete Item</string>
-    <string name="title_activity_barcode_Read">Stock.It - Barcode Search</string>
-    <string name="title_activity_barcode_Write">Stock.It - Barcode Write</string>
+    <string name="lom_settings">Settings</string>
+    <string name="login_button">Login</string>
+    <string name="signup_button">Sign Up</string>
+
+    <!-- Warehouses Module -->
+    <!-- Warehouses List and Context Menu -->
+    <string name="title_warehouses">Manage Warehouses</string>
+    <string name="wcm_view">View</string>
+    <string name="wcm_edit">Edit</string>
+    <string name="wcm_delete">Delete</string>
+
+    <!-- Warehouses List Options Menu -->
+    <string name="wom_add">New Warehouse</string>
+    <string name="wom_export">Export…</string>
+    <string name="wom_logout">Logout</string>
+
+    <!-- Warehouse CRUD Activity -->
+    <string name="title_view_warehouse">View Warehouse</string>
+    <string name="title_edit_warehouse">Edit Warehouse</string>
+    <string name="title_add_warehouse">Add Warehouse</string>
+    <string name="warehouse_param_name">Name</string>
+    <string name="warehouse_param_description">Description</string>
+    <string name="warehouse_param_latitude">Latitude</string>
+    <string name="warehouse_param_longitude">Longitude</string>
+    <string name="warehouse_crud_button_back">Back</string>
+    <string name="warehouse_crud_button_save">Save Changes</string>
+    <string name="warehouse_crud_button_add">Create Warehouse</string>
+
+    <!-- Items Module -->
+    <!-- Items List and Context Menu -->
+    <string name="title_inventory">Manage Warehouse</string>
+    <string name="icm_view">View</string>
+    <string name="icm_edit">Edit</string>
+    <string name="icm_delete">Delete</string>
+
+    <!-- Items List Options Menu -->
+    <string name="iom_add">New Item</string>
+    <string name="iom_barcode_search">Barcode Search</string>
+    <string name="iom_barcode_write">Barcode Write</string>
+
+    <!-- Item CRUD Activity -->
+    <string name="title_add_item">Add Item</string>
+    <string name="title_view_item">View Item</string>
+    <string name="title_edit_item">Edit Item</string>
+    <string name="item_param_name">Nome</string>
+    <string name="item_param_description">Description</string>
+    <string name="item_param_available">Available</string>
+    <string name="item_param_allocated">Allocated</string>
+    <string name="item_param_alert">Alert</string>
+    <string name="item_param_barcode">Barcode</string>
+    <string name="item_crud_button_back">Back</string>
+    <string name="item_crud_button_save">Save Changes</string>
+    <string name="item_crud_button_add">Create Item</string>
+    <string name="item_crud_button_barcode">Read Barcode</string>
+
+    <!-- Utility -->
+    <!-- Barcode Activity -->
+    <string name="title_activity_barcode_Read">Barcode Search</string>
+    <string name="title_activity_barcode_Write">Barcode Write</string>
 </resources>

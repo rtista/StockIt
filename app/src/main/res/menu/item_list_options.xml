@@ -2,11 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/iom_add"
-        android:title="Add Item"/>
+        android:title="@string/iom_add" />
     <item
         android:id="@+id/iom_barcode_read"
-        android:title="Barcode Read"/>
+        android:title="@string/iom_barcode_search" />
     <item
         android:id="@+id/iom_barcode_write"
-        android:title="Barcode Write"/>
+        android:title="@string/iom_barcode_write" />
 </menu>

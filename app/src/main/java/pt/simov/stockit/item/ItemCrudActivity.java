@@ -167,7 +167,7 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
                 // Remove barcode read button
                 btnBarcode.setVisibility(View.GONE);
 
-                btn.setText("Back");
+                btn.setText(R.string.item_crud_button_back);
                 break;
 
             // Edit
@@ -212,7 +212,7 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
                 // Set barcode button visible
                 btnBarcode.setVisibility(View.VISIBLE);
 
-                btn.setText("Save");
+                btn.setText(R.string.item_crud_button_save);
                 break;
 
             // Create
@@ -252,7 +252,7 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
                     btnBarcode.setVisibility(View.VISIBLE);
                 }
 
-                btn.setText("Create");
+                btn.setText(R.string.item_crud_button_add);
                 break;
         }
 

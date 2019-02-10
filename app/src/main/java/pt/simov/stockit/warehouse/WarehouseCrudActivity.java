@@ -114,7 +114,6 @@ public class WarehouseCrudActivity extends AppCompatActivity implements View.OnC
         lat_et = findViewById(R.id.warehouse_lat);
         lon_et = findViewById(R.id.warehouse_long);
         btn = findViewById(R.id.btn_action);
-        tv = findViewById(R.id.warehouse_title);
 
         SupportMapFragment mapFragment = (SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.warehouse_map);
         ViewGroup.LayoutParams params = mapFragment.getView().getLayoutParams();
@@ -146,7 +145,6 @@ public class WarehouseCrudActivity extends AppCompatActivity implements View.OnC
 
                 // Set Activity Title
                 setTitle(R.string.title_view_warehouse);
-                tv.setText("View Warehouse");
 
                 // Set Text fields content
                 name_et.setText(name);
@@ -154,7 +152,7 @@ public class WarehouseCrudActivity extends AppCompatActivity implements View.OnC
                 lat_et.setText(lat);
                 lon_et.setText(lon);
 
-                btn.setText("Back");
+                btn.setText(R.string.warehouse_crud_button_back);
                 break;
 
             // Edit
@@ -168,7 +166,6 @@ public class WarehouseCrudActivity extends AppCompatActivity implements View.OnC
 
                 // Set activity title
                 setTitle(R.string.title_edit_warehouse);
-                tv.setText("Edit Warehouse");
 
                 // Set text fields content
                 name_et.setText(name);
@@ -176,7 +173,7 @@ public class WarehouseCrudActivity extends AppCompatActivity implements View.OnC
                 lat_et.setText(lat);
                 lon_et.setText(lon);
 
-                btn.setText("Save");
+                btn.setText(R.string.warehouse_crud_button_save);
 
                 setEditTextListenetrs();
                 break;
@@ -191,15 +188,9 @@ public class WarehouseCrudActivity extends AppCompatActivity implements View.OnC
                 lon_et.setEnabled(true);
 
                 // Set activity title
-                tv.setText("New Warehouse");
                 setTitle(R.string.title_add_warehouse);
-                // Set
-                /*name_et.setText("");
-                description_et.setText("");
-                lat_et.setText("");
-                lon_et.setText("");*/
 
-                btn.setText("Create");
+                btn.setText(R.string.warehouse_crud_button_add);
                 setEditTextListenetrs();
                 break;
         }

@@ -1,22 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- General -->
     <string name="app_name">Stock.It</string>
-    <string name="password">Palavra-Passe</string>
+
+    <!-- Sign Up and Login and Options Menu -->
+    <string name="title_signup">Registar</string>
+    <string name="title_login">Iniciar Sessão</string>
     <string name="username">Usuário</string>
+    <string name="password">Palavra-Passe</string>
+    <string name="email">Endereço Email</string>
+    <string name="login_link">Já tem conta? Iniciar Sessão!</string>
     <string name="signup_link">Ainda não tem conta? Crie uma agora!</string>
     <string name="remember_me">Guardar as minhas credenciais</string>
-    <string name="title_login">Iniciar Sessão</string>
-    <string name="title_signup">Registar</string>
+    <string name="lom_settings">Definições</string>
+    <string name="login_button">Entrar</string>
+    <string name="signup_button">Criar Conta</string>
+
+    <!-- Warehouses Module -->
+    <!-- Warehouses List and Context Menu -->
     <string name="title_warehouses">Inventários</string>
+    <string name="wcm_view">Detalhes</string>
+    <string name="wcm_edit">Editar</string>
+    <string name="wcm_delete">Apagar</string>
+
+    <!-- Warehouses List Options Menu -->
+    <string name="wom_add">Novo Inventário</string>
+    <string name="wom_export">Exportar…</string>
+    <string name="wom_logout">Terminar Sessão</string>
+
+    <!-- Warehouse CRUD Activity -->
     <string name="title_view_warehouse">Detalhes do Inventário</string>
     <string name="title_edit_warehouse">Editar Inventário</string>
     <string name="title_add_warehouse">Novo Inventário</string>
-    <string name="title_delete_warehouse">Apagar Inventário</string>
-    <string name="title_inventory">Itens</string>
+    <string name="warehouse_param_name">Nome</string>
+    <string name="warehouse_param_description">Descrição</string>
+    <string name="warehouse_param_latitude">Latitude</string>
+    <string name="warehouse_param_longitude">Longitude</string>
+    <string name="warehouse_crud_button_back">Voltar</string>
+    <string name="warehouse_crud_button_save">Guardar Alterações</string>
+    <string name="warehouse_crud_button_add">Criar</string>
+
+    <!-- Items Module -->
+    <!-- Items List and Context Menu -->
+    <string name="title_inventory">Gerir Inventário</string>
+    <string name="icm_view">Detalhes</string>
+    <string name="icm_edit">Editar</string>
+    <string name="icm_delete">Apagar</string>
+
+    <!-- Items List Options Menu -->
+    <string name="iom_add">Novo Item</string>
+    <string name="iom_barcode_search">Pesquisar Códigos de Barras</string>
+    <string name="iom_barcode_write">Registar Códigos de Barras</string>
+
+    <!-- Item CRUD Activity -->
+    <string name="title_add_item">Novo Item</string>
     <string name="title_view_item">Detalhes do Item</string>
     <string name="title_edit_item">Editar Item</string>
-    <string name="title_add_item">Novo Item</string>
-    <string name="title_delete_item">Apagar Item</string>
+    <string name="item_param_name">Nome</string>
+    <string name="item_param_description">Descrição</string>
+    <string name="item_param_available">Disponíveis</string>
+    <string name="item_param_allocated">Alocados</string>
+    <string name="item_param_alert">Alerta</string>
+    <string name="item_param_barcode">Código de Barras</string>
+    <string name="item_crud_button_back">Voltar</string>
+    <string name="item_crud_button_save">Guardar Alterações</string>
+    <string name="item_crud_button_add">Criar</string>
+    <string name="item_crud_button_barcode">Ler Código de Barras</string>
+
+    <!-- Utility -->
+    <!-- Barcode Activity -->
     <string name="title_activity_barcode_Read">Pesquisa por Código de Barras</string>
     <string name="title_activity_barcode_Write">Registo de Códigos de Barras</string>
 </resources>

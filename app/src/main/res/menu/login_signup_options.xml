@@ -2,5 +2,5 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/lom_settings"
-        android:title="Settings" />
+        android:title="@string/lom_settings" />
 </menu>
