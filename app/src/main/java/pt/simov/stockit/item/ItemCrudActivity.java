@@ -26,7 +26,7 @@ import pt.simov.stockit.core.ApiHandler;
 import pt.simov.stockit.core.http.HttpClient;
 import pt.simov.stockit.core.http.StockItCallback;
 
-public class ItemCrudActivity extends AppCompatActivity implements View.OnClickListener {
+public class ItemCrudActivity extends AppCompatActivity implements View.OnClickListener, NumberPicker.OnValueChangeListener {
 
     /**
      * Activity Result Codes
@@ -69,7 +69,7 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
     private NumberPicker availablep, allocatedp, alertp;
 
     /**
-     * Visisbility Toggled Layouts
+     * Visibility Toggled Layouts
      */
     private LinearLayout pickers, ets;
 
@@ -102,6 +102,9 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
         this.availablep.setWrapSelectorWheel(false);
         this.allocatedp.setWrapSelectorWheel(false);
         this.alertp.setWrapSelectorWheel(false);
+
+        // Change max allocated value based on available value
+        this.availablep.setOnValueChangedListener(this);
 
         // Layouts
         this.pickers = findViewById(R.id.item_crud_pickers);
@@ -182,21 +185,21 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
                 this.desc_et.setEnabled(true);
                 this.barcode_et.setEnabled(true);
 
-                // Set minimum and maximum quantities for number pickers
-                this.availablep.setMinValue(0);
-                this.availablep.setMaxValue(Integer.MAX_VALUE);
-                this.allocatedp.setMinValue(0);
-                this.allocatedp.setMaxValue(this.availablep.getValue());
-                this.alertp.setMinValue(0);
-                this.alertp.setMaxValue(Integer.MAX_VALUE);
-
                 // Get Item Info
                 name = this.getIntent().getStringExtra("NAME");
                 desc = this.getIntent().getStringExtra("DESCRIPTION");
                 barcode = this.getIntent().getStringExtra("BARCODE");
-                available = this.getIntent().getIntExtra("QUANTITY", 0);
+                available = this.getIntent().getIntExtra("AVAILABLE", 0);
                 allocated = this.getIntent().getIntExtra("ALLOCATED", 0);
-                alert = this.getIntent().getIntExtra("MIN_QUANTITY", 0);
+                alert = this.getIntent().getIntExtra("ALERT", 0);
+
+                // Set minimum and maximum quantities for number pickers
+                this.availablep.setMinValue(0);
+                this.availablep.setMaxValue(Integer.MAX_VALUE);
+                this.allocatedp.setMinValue(0);
+                this.allocatedp.setMaxValue(available);
+                this.alertp.setMinValue(0);
+                this.alertp.setMaxValue(Integer.MAX_VALUE);
 
                 // Set input fields content
                 this.name_et.setText(name);
@@ -255,6 +258,20 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
 
         // Set on click button listener
         btn.setOnClickListener(this);
+    }
+
+    /**
+     * On number picker value change.
+     *
+     * @param picker The picker which value's changed.
+     * @param oldVal The old value.
+     * @param newVal The new value.
+     */
+    @Override
+    public void onValueChange(NumberPicker picker, int oldVal, int newVal) {
+
+        // Change max value
+        this.allocatedp.setMaxValue(newVal);
     }
 
     /**
@@ -474,5 +491,4 @@ public class ItemCrudActivity extends AppCompatActivity implements View.OnClickL
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
-
 }
